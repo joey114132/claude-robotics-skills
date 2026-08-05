@@ -1,71 +1,72 @@
 # Evaluation
 
-Eight rounds of blind measurement, published as measured — including the six rounds where the skills lost.
+Nine rounds of blind measurement. The honest summary is **parity with two large opposing effects** — not the win the previous version of this file claimed.
 
 ## Headline
 
-Final round, all **14 blind-judged robotics questions**: skills won 8, baseline won 4, 2 tied. Total rubric score **96% vs 93%**.
-
-The first blind measurement was 2 wins against 10.
+Latest round, 14 blind-judged questions: skills 93%, baseline 93%.
 
 ![Benchmark: skill-guided vs baseline across six expert-quality criteria, 14 cases](assets/benchmark.svg)
 
 | Criterion | With skill | Baseline |
 |---|---|---|
-| Caught the trap / delivered the expert value | **100%** | 93% |
-| Cited verifiable sources | **100%** | 82% |
-| Answered what was asked | **100%** | 89% |
-| Gave real options | **100%** | 96% |
-| Explained the principle | 100% | 100% |
-| No fabricated claims | 75% | **96%** |
+| Cited verifiable sources | **100%** | 79% |
+| Caught the trap / delivered the expert value | **100%** | 96% |
+| Explained the principle | **100%** | 96% |
+| Gave real options | 100% | 100% |
+| Answered what was asked | 89% | 89% |
+| No fabricated claims | 71% | **100%** |
 
-Five of six criteria at 100%. One criterion — fabrication discipline — is still behind, and it is the same one that has resisted every round.
+Two effects are large and reproduce across rounds; the rest is close to a wash. The skills **cite roughly 20 points better** and **score roughly 25 points worse on fabrication discipline**. Those cancel.
+
+## Read this before any tally
+
+Baseline answers were generated once and reused unchanged in every round, so their score measures pure judge noise on fixed text: **94%, 93%, 93%** across the last three rounds — about a point. Skill answers are regenerated each round, and their totals ran **92%, 96%, 93%** on the same 14 cases with the same rubric.
+
+At case level that is:
+
+| Round | Cases (skill-baseline-tie) | Skill total |
+|---|---|---|
+| v7 | 6-7-1 | 92% |
+| v8 | 8-4-2 | 96% |
+| v9 | 4-6-4 | 93% |
+
+Wins swing from 4 to 8 on identical questions. **A single round cannot resolve a difference of two or three cases**, and an earlier version of this file reported the 8-4-2 round as a headline win. That was reading noise as signal; it is retracted here. Criterion-level scores, which average over 14 cases, are the only numbers worth quoting.
 
 ## Method
 
-Two question shapes, one rubric, one protocol. **Diagnostic** (8 cases): "why is this happening" questions each carrying a planted trap an expert catches — e.g. "12-DOF quadruped on hobby RC servos, MPC or RL for trotting?", where the right answer refuses the framing because position-only servos cannot do dynamic locomotion at all. **Design** (6 cases): "we're building X, how should we approach it", where imposing the right decision order is the graded value.
+Two question shapes, one rubric. **Diagnostic** (8 cases): "why is this happening" questions each carrying a planted trap — e.g. "12-DOF quadruped on hobby RC servos, MPC or RL for trotting?", where the right answer refuses the framing because position-only servos cannot do dynamic locomotion at all. **Design** (6 cases): "we're building X, how should we approach it", where imposing the right decision order is the graded value.
 
-Each question answered twice — once following the relevant skill, once by the same model unaided. An independent judge scored both **without knowing which was which**, presentation order alternated across cases. Baselines were generated once and reused unchanged through every round, so only the skills varied. Each case directory keeps both answers and the judge's `grade.json`.
+Each question answered twice — once following the relevant skill, once by the same model unaided. An independent judge scored both **without knowing which was which**, presentation order alternated. Each case directory keeps both answers and the judge's `grade.json`.
 
-## Eight rounds — what moved and what didn't
+## What is actually established
 
-| Round | Change | Cases (S-B-T) | Scope | Sources | Fabrication |
-|---|---|---|---|---|---|
-| v2 | original skills | 2-5-1 /8 | 56% | — | 69% |
-| v3–v4 | gate the mode menu; hedge unverifiables | 2-5-1 /8 | 69% | — | 75% |
-| design | (same skills, right question shape) | 1-5-0 /6 | 50% | — | 75% |
-| v5 | **structural inversion** | 4-7-1 /12 | 96% | — | 83% |
-| v6 | inline source attribution | 6-6-0 /12 | 100% | 96% | 83% |
-| v7 | snapshot as hard citation boundary | 6-7-1 /14 | 100% | 82% | 79% |
-| v8 | **two-class citation rule + carry source URLs** | **8-4-2 /14** | **100%** | **100%** | 75% |
+**The citation gain is real and reproduced.** Sources scored 100% against a 79-82% baseline in two consecutive rounds. The cause is mechanical: `references/landscape.md` carries a source URL per entry, and the skills now pass that link into the answer instead of asserting the fact bare. The single largest jump in the whole project came from using an asset that was already sitting in the files.
 
-Three findings are worth more than the tally.
+**Structure beat wording.** Three early rounds of added rules moved almost nothing. What worked was inverting the document — making the decision sequence an internal completeness checklist rather than the reply's outline, and putting delivery rules first. Scope went from 56% to consistently 89-100%.
 
-**Structure beat wording.** Three rounds of added rules moved almost nothing. What worked was inverting the document: the decision sequence became an internal completeness checklist instead of the reply's outline, and delivery rules — verdict first, deliver in one pass, defer only when interaction is genuinely available — moved to the top. Scope went from the skills' worst criterion (56%) to a perfect score.
+**"Fabrication" is not measuring fabrication.** This is the finding worth carrying away. Judges flagged unverifiable arXiv IDs every round, so we checked: of **29 arXiv IDs cited across the answers, 29 came from the verified snapshots and 0 were invented.** The criterion is largely measuring *whether a judge with no search can confirm a reference* — not whether the model made it up. Two things did turn out to be genuinely wrong: paper IDs were being emitted as bare numbers with no link (fixed — 98 snapshot entries now carry canonical `arxiv.org/abs/` URLs), and one answer quoted a platform mass that was not in its snapshot at all (a real rule violation, now explicitly barred).
 
-**Over-caution costs as much as over-claiming.** v7 told the skills to drop unverifiable specifics; they responded by dropping *verifiable* ones too, and sources fell 96% → 82%. One answer was marked down for being "correct but generic, cites no specific tools". The v8 rule splits the two classes explicitly — stable identifiers (library and plugin names, CLI commands, parameter names, standard numbers) are said freely and concretely; things that decay (release dates, support windows, prices, masses, "latest" anything) do not leave the snapshot without a live check. Sources recovered to 100%.
+**Four targeted attempts never moved fabrication up** (69% → 75% → 79% → 75% → 71%). Every attempt to make the skills more careful cost something elsewhere: v7's tightening made them drop verifiable tool names too, and sources fell 96% → 82% before the two-class rule recovered it.
 
-**Use the asset you already have.** The snapshots carry a `Source:` URL per entry, and until v8 the answers never passed it through — they said "per REP-2000" and asked the reader to trust it. Carrying the actual link is what moved sources 18 points in one round. It was sitting there the whole time.
+## Limitations
 
-## The one criterion still behind
-
-Fabrication stayed at 75%. The v8 judge notes name the cause precisely and consistently: **unverifiable arXiv IDs and vendor spec numbers**. "Asserts five unhedged arXiv IDs", "~7 unverifiable post-cutoff claims", "marketing-blog citations for hard specs including a ~30 kg ANYmal mass". Two-class splitting did not fix it, because a paper ID *looks* like a stable identifier while being exactly the kind a model reconstructs wrongly.
-
-The honest read: this is the deficit that **live search exists to close**, and live search was unavailable in all eight rounds. The rule these skills are built on is verify-then-speak; every round measured them with the verify step amputated. Whether verify-then-speak, actually allowed to verify, converts this deficit into a strength is the open question this benchmark cannot answer.
-
-## Limitations — read the result narrowly
-
-- **One run per condition.** v7 was 6-7-1 and v8 is 8-4-2 on the same cases; part of that swing is noise. The claim this supports is "no longer behind, and clearly ahead on five criteria" — not a precise effect size.
-- **Live search disabled throughout**, which both handicaps the skills' core mechanism and makes the fabrication criterion harsher than normal operation.
+- **Live search was unavailable in all nine rounds** — the mechanism these skills are built on is verify-then-speak, and every measurement ran with the verify step amputated. That is precisely why snapshot-sourced references kept scoring as unverifiable.
+- One run per condition, with the variance documented above.
 - Single-turn evaluation penalizes an interactive design; the judge is a language model applying a rubric, not a practicing roboticist.
 - The author of the skills also designed the benchmark. Blind judging and a fixed rubric limit that conflict without eliminating it.
 
-## An earlier number, retracted
+## Also retracted
 
-An earlier iteration reported **100% vs 83.8%** for the skills. Do not trust it: its assertions rewarded the skills' own output format rather than answer quality. The blind rubric replaced it, and immediately showed the opposite. Recorded here only so nobody re-quotes it.
+An early iteration reported **100% vs 83.8%** for the skills. Its assertions rewarded the skills' own output format rather than answer quality. Recorded only so nobody re-quotes it.
+
+## What would settle it
+
+Live search enabled, three or more runs per condition so the variance above stops dominating, multi-turn scenarios where decision gates actually get answered, and a human robotics reviewer alongside the model judge.
 
 ## Reproducing
 
 ```sh
 python3 scripts/make_bench_chart.py <workspace> [<workspace> ...]
+python3 scripts/check_sources.py            # re-validate every snapshot source URL
 ```

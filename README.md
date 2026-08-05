@@ -118,11 +118,11 @@ Standard library only, non-zero exit on a dead link — drop it in CI.
 
 **Findings that only exist because it verifies.** The snapshots record things a model answering from memory gets wrong: that `osrf/rmf_core` — the Open-RMF repo most training data still cites — was archived in 2021 and development moved to the `open-rmf` org. Archived-but-still-ranking repos are the exact failure this collection is built to prevent.
 
-**It was measured over eight blind rounds, and the losing six are published too.** Fourteen questions, each answered with and without the skills, scored by a judge who did not know which was which. Final round: **8 skill wins, 4 baseline, 2 ties — 96% vs 93%.** The first round was 2 wins against 10.
+**Measured over nine blind rounds, and the result is parity — stated as such, including a headline this project previously got wrong.** Fourteen questions, each answered with and without the skills, scored by a judge who did not know which was which. Latest round: **93% vs 93%.**
 
-The skills now score **100%** on catching the planted expert traps, on citing verifiable sources, on answering the question actually asked, and on giving real options. One criterion is still behind — fabrication discipline, 75% vs 96% — because unverifiable paper IDs and vendor specs kept slipping through in a benchmark where the skills' live-verification step was disabled throughout.
+Two effects are large and reproduce; they cancel. The skills **cite about 20 points better** (100% vs 79% on verifiable sources — they pass through the source URL their snapshots already hold, instead of asserting facts bare) and score **about 25 points worse on fabrication discipline** — in a benchmark where their verify-then-speak mechanism was disabled throughout. On catching planted expert traps, explaining the principle, and giving real options they run at 100%.
 
-What actually closed the gap is in **[EVAL.md](EVAL.md)**: restructuring beat rule-writing, over-caution cost as much as over-claiming, and the biggest single jump came from passing through a source URL the snapshots already held. It also records the fixes that did nothing, the one that backfired, and a retracted early figure that flattered the project. A benchmark that only ever shows the project winning is marketing.
+**[EVAL.md](EVAL.md)** has the parts that matter more than the score: why an earlier "8 wins vs 4" headline was retracted as noise (wins swing 4-to-8 across rounds on identical questions), why the "fabrication" criterion turned out not to be measuring fabrication — 29 of 29 cited paper IDs came from verified snapshots, none invented — and the four fixes that never moved it. A benchmark that only ever shows the project winning is marketing.
 
 ---
 
