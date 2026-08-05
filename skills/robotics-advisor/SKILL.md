@@ -38,6 +38,8 @@ The OCR is rough: trust the book for structure, definitions, and method names; r
 
 Search before presenting — the map's "modern counterparts" column gives starting keywords only, not facts. Use WebSearch (libraries, tooling, tutorials, benchmarks) and the arXiv MCP tools (`mcp__arxiv__search_papers`, `mcp__arxiv__semantic_search`) for recent methods. For each candidate, establish: what it improves over the classic method, its cost (complexity, dependencies, compute), and maturity (maintained library vs research code). Don't present anything you couldn't verify — an unverified option gets labeled as such or dropped.
 
+Run this scan on **every invocation** — never skip it because an earlier session already searched. If findings contradict or postdate the modern-counterparts table in `references/craig3-map.md`, update that table in the same session — the skill keeps itself current.
+
 ### 4. Present options and let the user choose
 
 Call AskUserQuestion with 2-4 options. Compose them so the tradeoff is real:

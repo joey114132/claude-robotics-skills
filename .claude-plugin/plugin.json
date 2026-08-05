@@ -2,13 +2,13 @@
   "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
   "name": "robotics-skills",
   "displayName": "Robotics Skills",
-  "version": "0.2.0",
-  "description": "Seven choose-and-loop robotics advisors: robotics-advisor (fundamentals + modern alternatives), ros2-master (ROS 2 architecture), robot-arm (manipulator integration), robot-hand (grippers to 5-finger dexterous hands), robot-mobile (SLAM/Nav2), robot-fleet (Open-RMF/multi-robot), robot-learning (imitation learning/RL/policies).",
+  "version": "0.3.0",
+  "description": "Eight choose-and-loop robotics advisors: robotics-advisor (fundamentals + modern alternatives), ros2-master (ROS 2 architecture), robot-arm (manipulator integration), robot-hand (grippers to 5-finger dexterous hands), robot-mobile (SLAM/Nav2), robot-legged (quadrupeds/humanoids), robot-fleet (Open-RMF/multi-robot), robot-learning (imitation learning/RL/policies). Each runs a live verified search on every invocation.",
   "author": {
     "name": "joey114132"
   },
   "homepage": "https://github.com/joey114132/claude-robotics-skills",
   "repository": "https://github.com/joey114132/claude-robotics-skills",
   "license": "MIT",
-  "keywords": ["robotics", "ros2", "manipulator", "gripper", "dexterous-hand", "kinematics", "navigation", "slam", "open-rmf", "fleet", "imitation-learning", "skills"]
+  "keywords": ["robotics", "ros2", "manipulator", "gripper", "dexterous-hand", "kinematics", "navigation", "slam", "open-rmf", "fleet", "imitation-learning", "quadruped", "humanoid", "legged-locomotion", "skills"]
 }

@@ -34,6 +34,8 @@ Frame conventions (`map` → `odom` → `base_link` — REP-105), why odom must 
 
 Verify current SLAM/localization/planner options with WebSearch before presenting — the ecosystem's default choices shift between distro generations. Remembered package names are search keywords, not recommendations.
 
+**Live scan on every invocation.** Start from `references/landscape.md` — a dated, source-verified snapshot — then re-verify with fresh search before presenting: confirm the entries you use still hold and check for newer options. If the live scan contradicts or postdates the snapshot, update `references/landscape.md` (and its Verified date) in the same session — this skill keeps itself current.
+
 ## Gotchas
 
 - **Bad odometry can't be tuned away downstream.** If TF `odom → base_link` drifts badly over a few meters, fix wheel radii/track width/IMU fusion first — no SLAM or localization tuning compensates for it.

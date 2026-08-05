@@ -35,6 +35,8 @@ Work these stages in order — each depends on the previous. One AskUserQuestion
 
 At each stage, search (WebSearch/arXiv) for the current best tooling before presenting options — planner plugins, IK libraries, driver packages, and sim pairings all evolve. Present only what you verified exists and is maintained.
 
+**Live scan on every invocation.** Start from `references/landscape.md` — a dated, source-verified snapshot — then re-verify with fresh search before presenting: confirm the entries you use still hold and check for newer options. If the live scan contradicts or postdates the snapshot, update `references/landscape.md` (and its Verified date) in the same session — this skill keeps itself current.
+
 ## Gotchas
 
 - **CAD-exported inertials are usually garbage.** Zero or absurd inertia tensors make simulation explode and gravity compensation nonsense. Sanity-check magnitudes against a hand estimate before trusting any dynamic behavior.

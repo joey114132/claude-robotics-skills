@@ -32,6 +32,8 @@ One AskUserQuestion gate per decision, boring-and-proven default always included
 
 Before presenting options, verify the current state (WebSearch): Open-RMF component names and maturity, supported fleet adapters, middleware tiers for scale. Multi-robot tooling changes fast — treat remembered project names as search keywords, not facts.
 
+**Live scan on every invocation.** Start from `references/landscape.md` — a dated, source-verified snapshot — then re-verify with fresh search before presenting: confirm the entries you use still hold and check for newer options. If the live scan contradicts or postdates the snapshot, update `references/landscape.md` (and its Verified date) in the same session — this skill keeps itself current.
+
 ## Gotchas
 
 - **DDS discovery melts down before your code does.** Default peer-to-peer discovery traffic grows roughly with N² participants; fleets that work at 3 robots break at 15. Plan discovery architecture early, not after symptoms.

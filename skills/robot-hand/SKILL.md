@@ -32,6 +32,8 @@ One AskUserQuestion gate per decision, simple-and-proven default always among th
 
 Grasping is an active research area — before presenting options, search (WebSearch/arXiv) for the current state of learned grasp synthesis, tactile sensors, and open hand designs. Treat any model or hand name you recall as a keyword to verify, not a fact to assert.
 
+**Live scan on every invocation.** Start from `references/landscape.md` — a dated, source-verified snapshot — then re-verify with fresh search before presenting: confirm the entries you use still hold and check for newer options. If the live scan contradicts or postdates the snapshot, update `references/landscape.md` (and its Verified date) in the same session — this skill keeps itself current.
+
 ## Gotchas
 
 - **Position-mode gripping stalls servos into overheating.** Commanding a closed position on an object the fingers can't reach means continuous stall current. Grip with current/torque limits (or stop-on-load), never bare position error.

@@ -30,6 +30,8 @@ One AskUserQuestion gate per decision, non-learning baseline always among the op
 
 This field moves faster than any other in robotics — model names, dataset formats, and toolkits churn quarterly. Everything you remember is a search keyword; verify with WebSearch/arXiv (`mcp__arxiv__search_papers`) before presenting, and prefer maintained tooling over paper code.
 
+**Live scan on every invocation.** Start from `references/landscape.md` — a dated, source-verified snapshot — then re-verify with fresh search before presenting: confirm the entries you use still hold and check for newer options. If the live scan contradicts or postdates the snapshot, update `references/landscape.md` (and its Verified date) in the same session — this skill keeps itself current.
+
 ## Gotchas
 
 - **Learning is the last resort, not the first move.** If a scripted controller solves the task, a policy only adds variance and maintenance. Losing this argument to enthusiasm wastes months.
