@@ -118,9 +118,11 @@ Standard library only, non-zero exit on a dead link — drop it in CI.
 
 **Findings that only exist because it verifies.** The snapshots record things a model answering from memory gets wrong: that `osrf/rmf_core` — the Open-RMF repo most training data still cites — was archived in 2021 and development moved to the `open-rmf` org. Archived-but-still-ranking repos are the exact failure this collection is built to prevent.
 
-**It was measured, seven rounds deep, and the final verdict is parity — published as such.** Fourteen blind-judged questions: 6 skill wins, 7 baseline wins, 1 tie. The first measurement was 2 against 10; what closed the gap was restructuring the skills so the decision sequence became an internal completeness checklist instead of the reply's outline. The skills now catch **100%** of the planted expert traps and score **100% vs 82%** on actually answering the question — and still give back those gains on one criterion: quoting snapshot specifics that a one-page answer can't verify (79% vs 100%), in a benchmark where the skills' live-verification mechanism was disabled.
+**It was measured over eight blind rounds, and the losing six are published too.** Fourteen questions, each answered with and without the skills, scored by a judge who did not know which was which. Final round: **8 skill wins, 4 baseline, 2 ties — 96% vs 93%.** The first round was 2 wins against 10.
 
-So the honest pitch is not "better answers on questions you could just ask" — it's completeness under pressure, **source-verified snapshots** of facts a model's memory gets wrong, and **decision ordering** for multi-day build work. The full seven-round history, including the fixes that failed, the one that backfired, and a retracted early figure, is in **[EVAL.md](EVAL.md)**. A benchmark that only ever shows the project winning is marketing.
+The skills now score **100%** on catching the planted expert traps, on citing verifiable sources, on answering the question actually asked, and on giving real options. One criterion is still behind — fabrication discipline, 75% vs 96% — because unverifiable paper IDs and vendor specs kept slipping through in a benchmark where the skills' live-verification step was disabled throughout.
+
+What actually closed the gap is in **[EVAL.md](EVAL.md)**: restructuring beat rule-writing, over-caution cost as much as over-claiming, and the biggest single jump came from passing through a source URL the snapshots already held. It also records the fixes that did nothing, the one that backfired, and a retracted early figure that flattered the project. A benchmark that only ever shows the project winning is marketing.
 
 ---
 
