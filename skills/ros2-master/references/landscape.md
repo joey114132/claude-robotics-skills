@@ -21,7 +21,7 @@ REP-2000 (fetched live) covers all releases through Kilted Kaiju; per the REP it
 
 - **Fast DDS (eProsima)** — the default RMW implementation (`rmw_fastrtps_cpp`) across every currently supported distro except EOL Galactic. Status: maintained (default). Source: https://fast-dds.docs.eprosima.com/en/latest/fastdds/ros2/ros2.html
 - **Cyclone DDS (Eclipse)** — alternative Tier-1 DDS RMW (`rmw_cyclonedds_cpp`), used as the default only in the EOL Galactic distro; commonly swapped in for its lower resource footprint. Status: maintained. Source: https://github.com/ros2/rmw_cyclonedds
-- **rmw_zenoh** — non-DDS RMW built on the Zenoh pub/sub/query protocol; officially supported as an installable alternative from Jazzy onward, targeting constrained/fog/cloud deployments where DDS discovery overhead is a problem. DDS remains the default — Zenoh is an opt-in alternative, not a replacement. Status: maintained (official alternative). Source: https://github.com/ros2/rmw_zenoh (also https://docs.ros.org/en/rolling/Installation/RMW-Implementations/Non-DDS-Implementations/Working-with-Zenoh.html)
+- **rmw_zenoh** — non-DDS RMW built on the Zenoh pub/sub/query protocol; officially supported as an installable alternative from Jazzy onward, targeting constrained/fog/cloud deployments where DDS discovery overhead is a problem. DDS remains the default — Zenoh is an opt-in alternative, not a replacement. Repo carries formal Quality Declarations and ships binaries for Tier-1 platforms, with per-distro branches. Status: maintained (official alternative). Source: https://github.com/ros2/rmw_zenoh
 
 ## ros2_control
 

@@ -9,7 +9,7 @@
     {
       "name": "robotics-skills",
       "source": "./",
-      "description": "Eight choose-and-loop robotics advisors: robotics-advisor, ros2-master, robot-arm, robot-hand, robot-mobile, robot-legged, robot-fleet, robot-learning.",
+      "description": "Choose-and-loop robotics advisors across 17 domains (arms, hands, mobile, legged, aerial, marine, soft, perception, safety, sim, fleet, swarm, field, medical, learning, ROS 2, fundamentals) plus a self-maintenance radar.",
       "category": "robotics"
     }
   ]

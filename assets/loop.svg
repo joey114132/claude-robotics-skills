@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" width="1200" height="300" role="img" aria-label="The choose-and-loop cycle: Frame, Fundamentals, Modern scan, Choose, Apply, then back to Frame">
+  <defs>
+    <linearGradient id="lg" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#D97757"/>
+      <stop offset="50%" stop-color="#C56A9B"/>
+      <stop offset="100%" stop-color="#5B8DEF"/>
+    </linearGradient>
+    <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#9A938B"/>
+    </marker>
+    <style>
+      .bg    { fill: #FAF9F7; }
+      .card  { fill: #FFFFFF; stroke: #E6E1DB; }
+      .gate  { fill: #FFF6F2; stroke: #E8B9A4; }
+      .num   { fill: #A79E95; }
+      .head  { fill: #1A1A1A; }
+      .body  { fill: #6B645C; }
+      .flow  { stroke: #9A938B; }
+      .rtxt  { fill: #8A837C; }
+      @media (prefers-color-scheme: dark) {
+        .bg    { fill: #16151A; }
+        .card  { fill: #201F26; stroke: #34323C; }
+        .gate  { fill: #2C2027; stroke: #7A4E45; }
+        .num   { fill: #6E675F; }
+        .head  { fill: #F5F3F0; }
+        .body  { fill: #A9A29A; }
+        .flow  { stroke: #5A544D; }
+        .rtxt  { fill: #7E7871; }
+      }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1200" height="300" rx="18"/>
+
+  <g font-family="ui-sans-serif,-apple-system,Segoe UI,Inter,Helvetica,Arial,sans-serif">
+    <g>
+      <rect class="card" x="44" y="70" width="186" height="106" rx="14" stroke-width="1.5"/>
+      <text class="num"  x="66" y="100" font-size="12.5" font-weight="700" letter-spacing="1.4">01</text>
+      <text class="head" x="66" y="126" font-size="19" font-weight="700">Frame</text>
+      <text class="body" x="66" y="150" font-size="13">pin down exactly</text>
+      <text class="body" x="66" y="167" font-size="13">one decision</text>
+    </g>
+    <path class="flow" d="M236 123 L272 123" stroke-width="2" marker-end="url(#ar)" fill="none"/>
+
+    <g>
+      <rect class="card" x="278" y="70" width="186" height="106" rx="14" stroke-width="1.5"/>
+      <text class="num"  x="300" y="100" font-size="12.5" font-weight="700" letter-spacing="1.4">02</text>
+      <text class="head" x="300" y="126" font-size="19" font-weight="700">Fundamentals</text>
+      <text class="body" x="300" y="150" font-size="13">the classic method,</text>
+      <text class="body" x="300" y="167" font-size="13">and why it works</text>
+    </g>
+    <path class="flow" d="M470 123 L506 123" stroke-width="2" marker-end="url(#ar)" fill="none"/>
+
+    <g>
+      <rect class="card" x="512" y="70" width="186" height="106" rx="14" stroke-width="1.5"/>
+      <text class="num"  x="534" y="100" font-size="12.5" font-weight="700" letter-spacing="1.4">03</text>
+      <text class="head" x="534" y="126" font-size="19" font-weight="700">Modern scan</text>
+      <text class="body" x="534" y="150" font-size="13">live search, every</text>
+      <text class="body" x="534" y="167" font-size="13">claim source-checked</text>
+    </g>
+    <path class="flow" d="M704 123 L740 123" stroke-width="2" marker-end="url(#ar)" fill="none"/>
+
+    <g>
+      <rect class="gate" x="746" y="70" width="186" height="106" rx="14" stroke-width="2"/>
+      <rect x="746" y="70" width="5" height="106" rx="2.5" fill="url(#lg)"/>
+      <text class="num"  x="770" y="100" font-size="12.5" font-weight="700" letter-spacing="1.4">04</text>
+      <text class="head" x="770" y="126" font-size="19" font-weight="700">You choose</text>
+      <text class="body" x="770" y="150" font-size="13">2–4 real options,</text>
+      <text class="body" x="770" y="167" font-size="13">classic always among</text>
+    </g>
+    <path class="flow" d="M938 123 L974 123" stroke-width="2" marker-end="url(#ar)" fill="none"/>
+
+    <g>
+      <rect class="card" x="980" y="70" width="176" height="106" rx="14" stroke-width="1.5"/>
+      <text class="num"  x="1002" y="100" font-size="12.5" font-weight="700" letter-spacing="1.4">05</text>
+      <text class="head" x="1002" y="126" font-size="19" font-weight="700">Apply</text>
+      <text class="body" x="1002" y="150" font-size="13">update the</text>
+      <text class="body" x="1002" y="167" font-size="13">decision stack</text>
+    </g>
+
+    <path class="flow" d="M1068 182 L1068 232 Q1068 244 1056 244 L149 244 Q137 244 137 232 L137 182"
+          stroke-width="2" stroke-dasharray="6 6" fill="none" marker-end="url(#ar)"/>
+    <rect class="bg" x="514" y="230" width="176" height="28" rx="6"/>
+    <text class="rtxt" x="602" y="249" font-size="13.5" font-weight="600" text-anchor="middle">next decision →</text>
+  </g>
+</svg>

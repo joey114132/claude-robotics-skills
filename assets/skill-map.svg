@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" width="1200" height="520" role="img" aria-label="Map of 17 robotics skills grouped into cross-cutting foundations, robot platforms, and systems and domains">
+  <defs>
+    <linearGradient id="acc" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#D97757"/>
+      <stop offset="100%" stop-color="#C56A9B"/>
+    </linearGradient>
+    <linearGradient id="acc2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#C56A9B"/>
+      <stop offset="100%" stop-color="#5B8DEF"/>
+    </linearGradient>
+    <linearGradient id="acc3" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#5B8DEF"/>
+      <stop offset="100%" stop-color="#4CAF8E"/>
+    </linearGradient>
+    <style>
+      .bg    { fill: #FAF9F7; }
+      .band  { fill: #F3F0EC; }
+      .pill  { fill: #FFFFFF; stroke: #E2DCD4; }
+      .name  { fill: #26241F; }
+      .desc  { fill: #8A837C; }
+      .lab   { fill: #A79E95; }
+      .note  { fill: #8A837C; }
+      @media (prefers-color-scheme: dark) {
+        .bg    { fill: #16151A; }
+        .band  { fill: #1D1C23; }
+        .pill  { fill: #24232C; stroke: #383641; }
+        .name  { fill: #EFEDE9; }
+        .desc  { fill: #8B857D; }
+        .lab   { fill: #6E675F; }
+        .note  { fill: #7E7871; }
+      }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1200" height="520" rx="18"/>
+
+  <g font-family="ui-sans-serif,-apple-system,Segoe UI,Inter,Helvetica,Arial,sans-serif">
+
+    <rect class="band" x="36" y="34" width="1128" height="132" rx="14"/>
+    <rect x="36" y="34" width="5" height="132" rx="2.5" fill="url(#acc)"/>
+    <text class="lab" x="60" y="60" font-size="11.5" font-weight="700" letter-spacing="2">CROSS-CUTTING · applies to every robot</text>
+
+    <g>
+      <rect class="pill" x="60"  y="74" width="172" height="72" rx="12" stroke-width="1.5"/>
+      <text class="name" x="76" y="102" font-size="14.5" font-weight="700">robotics-advisor</text>
+      <text class="desc" x="76" y="124" font-size="11.5">kinematics · dynamics</text>
+      <text class="desc" x="76" y="139" font-size="11.5">control theory</text>
+    </g>
+    <g>
+      <rect class="pill" x="244" y="74" width="172" height="72" rx="12" stroke-width="1.5"/>
+      <text class="name" x="260" y="102" font-size="14.5" font-weight="700">ros2-master</text>
+      <text class="desc" x="260" y="124" font-size="11.5">nodes · QoS · lifecycle</text>
+      <text class="desc" x="260" y="139" font-size="11.5">ros2_control</text>
+    </g>
+    <g>
+      <rect class="pill" x="428" y="74" width="172" height="72" rx="12" stroke-width="1.5"/>
+      <text class="name" x="444" y="102" font-size="14.5" font-weight="700">robot-perception</text>
+      <text class="desc" x="444" y="124" font-size="11.5">cameras · LiDAR</text>
+      <text class="desc" x="444" y="139" font-size="11.5">calibration · fusion</text>
+    </g>
+    <g>
+      <rect class="pill" x="612" y="74" width="172" height="72" rx="12" stroke-width="1.5"/>
+      <text class="name" x="628" y="102" font-size="14.5" font-weight="700">robot-safety</text>
+      <text class="desc" x="628" y="124" font-size="11.5">ISO 10218 · 13849</text>
+      <text class="desc" x="628" y="139" font-size="11.5">risk · e-stop · PL</text>
+    </g>
+    <g>
+      <rect class="pill" x="796" y="74" width="172" height="72" rx="12" stroke-width="1.5"/>
+      <text class="name" x="812" y="102" font-size="14.5" font-weight="700">robot-sim</text>
+      <text class="desc" x="812" y="124" font-size="11.5">digital twin</text>
+      <text class="desc" x="812" y="139" font-size="11.5">sim-to-real</text>
+    </g>
+    <g>
+      <rect class="pill" x="980" y="74" width="164" height="72" rx="12" stroke-width="1.5"/>
+      <text class="name" x="996" y="102" font-size="14.5" font-weight="700">robot-learning</text>
+      <text class="desc" x="996" y="124" font-size="11.5">imitation · RL</text>
+      <text class="desc" x="996" y="139" font-size="11.5">policies · eval</text>
+    </g>
+
+    <rect class="band" x="36" y="186" width="1128" height="132" rx="14"/>
+    <rect x="36" y="186" width="5" height="132" rx="2.5" fill="url(#acc2)"/>
+    <text class="lab" x="60" y="212" font-size="11.5" font-weight="700" letter-spacing="2">PLATFORMS · what kind of robot it is</text>
+
+    <g>
+      <rect class="pill" x="60"  y="226" width="148" height="72" rx="12" stroke-width="1.5"/>
+      <text class="name" x="76" y="254" font-size="14.5" font-weight="700">robot-arm</text>
+      <text class="desc" x="76" y="276" font-size="11.5">URDF · IK · MoveIt</text>
+      <text class="desc" x="76" y="291" font-size="11.5">calibration</text>
+    </g>
+    <g>
+      <rect class="pill" x="220" y="226" width="148" height="72" rx="12" stroke-width="1.5"/>
+      <text class="name" x="236" y="254" font-size="14.5" font-weight="700">robot-hand</text>
+      <text class="desc" x="236" y="276" font-size="11.5">grippers → 5-finger</text>
+      <text class="desc" x="236" y="291" font-size="11.5">grasp · grip force</text>
+    </g>
+    <g>
+      <rect class="pill" x="380" y="226" width="148" height="72" rx="12" stroke-width="1.5"/>
+      <text class="name" x="396" y="254" font-size="14.5" font-weight="700">robot-mobile</text>
+      <text class="desc" x="396" y="276" font-size="11.5">SLAM · Nav2</text>
+      <text class="desc" x="396" y="291" font-size="11.5">AMR · docking</text>
+    </g>
+    <g>
+      <rect class="pill" x="540" y="226" width="148" height="72" rx="12" stroke-width="1.5"/>
+      <text class="name" x="556" y="254" font-size="14.5" font-weight="700">robot-legged</text>
+      <text class="desc" x="556" y="276" font-size="11.5">quadruped · humanoid</text>
+      <text class="desc" x="556" y="291" font-size="11.5">balance · gait</text>
+    </g>
+    <g>
+      <rect class="pill" x="700" y="226" width="148" height="72" rx="12" stroke-width="1.5"/>
+      <text class="name" x="716" y="254" font-size="14.5" font-weight="700">robot-aerial</text>
+      <text class="desc" x="716" y="276" font-size="11.5">UAV · VTOL</text>
+      <text class="desc" x="716" y="291" font-size="11.5">autopilot · VIO</text>
+    </g>
+    <g>
+      <rect class="pill" x="860" y="226" width="148" height="72" rx="12" stroke-width="1.5"/>
+      <text class="name" x="876" y="254" font-size="14.5" font-weight="700">robot-marine</text>
+      <text class="desc" x="876" y="276" font-size="11.5">ROV · AUV · USV</text>
+      <text class="desc" x="876" y="291" font-size="11.5">DVL · acoustics</text>
+    </g>
+    <g>
+      <rect class="pill" x="1020" y="226" width="124" height="72" rx="12" stroke-width="1.5"/>
+      <text class="name" x="1036" y="254" font-size="14.5" font-weight="700">robot-soft</text>
+      <text class="desc" x="1036" y="276" font-size="11.5">continuum</text>
+      <text class="desc" x="1036" y="291" font-size="11.5">compliant</text>
+    </g>
+
+    <rect class="band" x="36" y="338" width="1128" height="132" rx="14"/>
+    <rect x="36" y="338" width="5" height="132" rx="2.5" fill="url(#acc3)"/>
+    <text class="lab" x="60" y="364" font-size="11.5" font-weight="700" letter-spacing="2">SYSTEMS &amp; DOMAINS · many robots, or a specific world</text>
+
+    <g>
+      <rect class="pill" x="60"  y="378" width="256" height="72" rx="12" stroke-width="1.5"/>
+      <text class="name" x="76" y="406" font-size="14.5" font-weight="700">robot-fleet</text>
+      <text class="desc" x="76" y="428" font-size="11.5">Open-RMF · traffic negotiation</text>
+      <text class="desc" x="76" y="443" font-size="11.5">shared lifts · doors · chargers</text>
+    </g>
+    <g>
+      <rect class="pill" x="328" y="378" width="256" height="72" rx="12" stroke-width="1.5"/>
+      <text class="name" x="344" y="406" font-size="14.5" font-weight="700">robot-swarm</text>
+      <text class="desc" x="344" y="428" font-size="11.5">decentralized control</text>
+      <text class="desc" x="344" y="443" font-size="11.5">consensus · emergent behavior</text>
+    </g>
+    <g>
+      <rect class="pill" x="596" y="378" width="256" height="72" rx="12" stroke-width="1.5"/>
+      <text class="name" x="612" y="406" font-size="14.5" font-weight="700">robot-field</text>
+      <text class="desc" x="612" y="428" font-size="11.5">agriculture · construction</text>
+      <text class="desc" x="612" y="443" font-size="11.5">RTK GNSS · outdoor autonomy</text>
+    </g>
+    <g>
+      <rect class="pill" x="864" y="378" width="280" height="72" rx="12" stroke-width="1.5"/>
+      <text class="name" x="880" y="406" font-size="14.5" font-weight="700">robot-medical</text>
+      <text class="desc" x="880" y="428" font-size="11.5">surgical · rehab · exoskeleton</text>
+      <text class="desc" x="880" y="443" font-size="11.5">IEC 60601 · regulatory path</text>
+    </g>
+
+    <text class="note" x="600" y="497" font-size="12.5" text-anchor="middle">
+      Pick any skill directly, or just describe your robot — they route to each other.
+    </text>
+  </g>
+</svg>

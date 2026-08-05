@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 340" width="1200" height="340" role="img" aria-label="claude-robotics-skills — fundamentals first, modern options verified, you choose, then loop">
+  <defs>
+    <linearGradient id="glow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#D97757"/>
+      <stop offset="55%" stop-color="#C56A9B"/>
+      <stop offset="100%" stop-color="#5B8DEF"/>
+    </linearGradient>
+    <linearGradient id="rule" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#D97757" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#5B8DEF" stop-opacity="0"/>
+    </linearGradient>
+    <style>
+      .bg    { fill: #FAF9F7; }
+      .title { fill: #1A1A1A; }
+      .sub   { fill: #55504B; }
+      .muted { fill: #8A837C; }
+      .chip  { fill: #F2EEE9; stroke: #E0DAD2; }
+      .chipt { fill: #55504B; }
+      .wire  { stroke: #C9C2BA; }
+      @media (prefers-color-scheme: dark) {
+        .bg    { fill: #16151A; }
+        .title { fill: #F5F3F0; }
+        .sub   { fill: #B9B3AC; }
+        .muted { fill: #7E7871; }
+        .chip  { fill: #262530; stroke: #3A3846; }
+        .chipt { fill: #C6C0B9; }
+        .wire  { stroke: #3A3846; }
+      }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1200" height="340" rx="18"/>
+
+  <!-- decorative arm linkage, right side -->
+  <g class="wire" fill="none" stroke-width="3" stroke-linecap="round" opacity="0.85">
+    <path d="M965 268 L965 210"/>
+    <path d="M965 210 L1043 150"/>
+    <path d="M1043 150 L1108 176"/>
+  </g>
+  <g opacity="0.95">
+    <rect x="932" y="268" width="66" height="12" rx="6" fill="url(#glow)" opacity="0.35"/>
+    <circle cx="965" cy="210" r="11" fill="none" stroke="url(#glow)" stroke-width="3"/>
+    <circle cx="1043" cy="150" r="9" fill="none" stroke="url(#glow)" stroke-width="3"/>
+    <circle cx="1108" cy="176" r="7" fill="url(#glow)"/>
+  </g>
+  <g class="wire" fill="none" stroke-width="3" stroke-linecap="round">
+    <path d="M1108 176 l16 -12"/>
+    <path d="M1108 176 l17 6"/>
+  </g>
+
+  <!-- title block -->
+  <text class="title" x="72" y="126" font-family="ui-sans-serif,-apple-system,Segoe UI,Inter,Helvetica,Arial,sans-serif" font-size="54" font-weight="700" letter-spacing="-1.2">
+    claude<tspan fill="url(#glow)">-</tspan>robotics<tspan fill="url(#glow)">-</tspan>skills
+  </text>
+  <rect x="74" y="146" width="420" height="3" rx="1.5" fill="url(#rule)"/>
+
+  <text class="sub" x="72" y="192" font-family="ui-sans-serif,-apple-system,Segoe UI,Inter,Helvetica,Arial,sans-serif" font-size="21" font-weight="500">
+    Fundamentals first. Modern options verified. You choose — then loop.
+  </text>
+  <text class="muted" x="72" y="222" font-family="ui-sans-serif,-apple-system,Segoe UI,Inter,Helvetica,Arial,sans-serif" font-size="15.5">
+    17 robotics domains for Claude Code, plus a radar that keeps every one of them current.
+  </text>
+
+  <!-- domain chips -->
+  <g font-family="ui-sans-serif,-apple-system,Segoe UI,Inter,Helvetica,Arial,sans-serif" font-size="13.5" font-weight="600">
+    <g><rect class="chip" x="72"  y="252" width="96"  height="30" rx="15"/><text class="chipt" x="120" y="272" text-anchor="middle">arms</text></g>
+    <g><rect class="chip" x="176" y="252" width="104" height="30" rx="15"/><text class="chipt" x="228" y="272" text-anchor="middle">hands</text></g>
+    <g><rect class="chip" x="288" y="252" width="118" height="30" rx="15"/><text class="chipt" x="347" y="272" text-anchor="middle">humanoids</text></g>
+    <g><rect class="chip" x="414" y="252" width="90"  height="30" rx="15"/><text class="chipt" x="459" y="272" text-anchor="middle">AMRs</text></g>
+    <g><rect class="chip" x="512" y="252" width="94"  height="30" rx="15"/><text class="chipt" x="559" y="272" text-anchor="middle">drones</text></g>
+    <g><rect class="chip" x="614" y="252" width="104" height="30" rx="15"/><text class="chipt" x="666" y="272" text-anchor="middle">marine</text></g>
+    <g><rect class="chip" x="726" y="252" width="112" height="30" rx="15"/><text class="chipt" x="782" y="272" text-anchor="middle">swarms</text></g>
+  </g>
+</svg>

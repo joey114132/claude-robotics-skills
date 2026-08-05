@@ -68,6 +68,16 @@ Decision stack
 
 Restate it briefly at each iteration; contradictions with earlier choices are a stop-and-flag, not a silent overwrite.
 
+## Loop modes
+
+Offer the user how they want to run the sequence, then honor it:
+
+- **Guided** (default) — one decision per turn, full reasoning, wait for each choice.
+- **Fast-forward** — you pick the recommended option at every gate, state each choice and why in one line, and stop only where the decision genuinely needs the user (irreversible, budget, or hardware-dependent).
+- **Audit** — no new decisions; walk the user's existing setup against this sequence and report what is unset, risky, or contradictory.
+
+When invoked inside a `/loop`, default to Fast-forward and report the decision stack each iteration.
+
 ## Gotchas
 
 - **The OCR in this scan is unreliable for math.** "will" renders as "wifi"; subscripts and Greek letters are mangled. Use the book for structure, names, and definitions — re-derive every equation yourself before showing it.

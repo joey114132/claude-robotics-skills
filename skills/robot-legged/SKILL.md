@@ -45,6 +45,16 @@ Legged robotics moves fast in both hardware and learning-based control. Search (
 
 **Live scan on every invocation.** Start from `references/landscape.md` — a dated, source-verified snapshot — then re-verify with fresh search before presenting: confirm the entries you use still hold and check for newer options. If the live scan contradicts or postdates the snapshot, update `references/landscape.md` (and its Verified date) in the same session — this skill keeps itself current.
 
+## Loop modes
+
+Offer the user how they want to run the sequence, then honor it:
+
+- **Guided** (default) — one decision per turn, full reasoning, wait for each choice.
+- **Fast-forward** — you pick the recommended option at every gate, state each choice and why in one line, and stop only where the decision genuinely needs the user (irreversible, budget, or hardware-dependent).
+- **Audit** — no new decisions; walk the user's existing setup against this sequence and report what is unset, risky, or contradictory.
+
+When invoked inside a `/loop`, default to Fast-forward and report the decision stack each iteration.
+
 ## Gotchas
 
 - **Position-controlled servos cannot do dynamic legged locomotion.** Compliant, torque-aware control needs torque/current control and low gear reduction. A hobby-servo quadruped will do slow static gaits and nothing more — set that expectation before any control-architecture discussion.

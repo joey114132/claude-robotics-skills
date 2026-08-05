@@ -2,8 +2,8 @@
   "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
   "name": "robotics-skills",
   "displayName": "Robotics Skills",
-  "version": "0.3.0",
-  "description": "Eight choose-and-loop robotics advisors: robotics-advisor (fundamentals + modern alternatives), ros2-master (ROS 2 architecture), robot-arm (manipulator integration), robot-hand (grippers to 5-finger dexterous hands), robot-mobile (SLAM/Nav2), robot-legged (quadrupeds/humanoids), robot-fleet (Open-RMF/multi-robot), robot-learning (imitation learning/RL/policies). Each runs a live verified search on every invocation.",
+  "version": "0.4.0",
+  "description": "Choose-and-loop robotics advisors covering 17 domains — method fundamentals, ROS 2 architecture, arms, hands, mobile bases, legged robots, aerial, marine, soft robots, perception, safety, simulation, fleets, swarms, field, medical, and robot learning — plus robotics-radar, a self-maintenance sweep. Each skill grounds answers in fundamentals, runs a live source-verified search on every invocation, and presents options for you to choose.",
   "author": {
     "name": "joey114132"
   },
