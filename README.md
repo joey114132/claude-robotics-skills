@@ -25,6 +25,18 @@ Claude Code에서 사용하는 robotics skill 모음입니다. 교과서 기본�
 
 ## 설치
 
+Claude Code 안에서 두 명령이면 됩니다.
+
+```
+/plugin marketplace add joey114132/claude-robotics-skills
+/plugin install robotics-skills@claude-robotics-skills
+```
+
+설치 후 새 세션부터 4개 skill이 자동으로 트리거됩니다.
+
+<details>
+<summary>plugin 없이 수동 설치 (symlink)</summary>
+
 ```sh
 git clone https://github.com/joey114132/claude-robotics-skills.git ~/claude-robotics-skills
 mkdir -p ~/.claude/skills
@@ -33,7 +45,7 @@ for s in ~/claude-robotics-skills/skills/*/; do
 done
 ```
 
-새 Claude Code 세션부터 skill이 자동으로 트리거됩니다.
+</details>
 
 ### robotics-advisor 사용 조건
 

@@ -1,0 +1,16 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "claude-robotics-skills",
+  "description": "Fundamentals-first robotics skills for Claude Code: method advising (Craig 3rd ed.), ROS 2 architecture, robot arm integration, and gripper/hand control.",
+  "owner": {
+    "name": "joey114132"
+  },
+  "plugins": [
+    {
+      "name": "robotics-skills",
+      "source": "./",
+      "description": "Four choose-and-loop robotics advisors: robotics-advisor, ros2-master, robot-arm, robot-hand.",
+      "category": "robotics"
+    }
+  ]
+}

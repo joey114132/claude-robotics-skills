@@ -4,9 +4,11 @@ Claude Code robotics skill 모음 repo. 코드 없음 — markdown skill 정의�
 
 ## Layout
 
+- `.claude-plugin/marketplace.json` + `plugin.json` — Claude Code plugin manifest (배포 경로: `/plugin marketplace add joey114132/claude-robotics-skills`)
 - `skills/<name>/SKILL.md` — skill 본체 (frontmatter: name, description, allowed_tools)
 - `skills/robotics-advisor/references/craig3-map.md` — Craig 3rd ed. PDF page map (pdf = book + 8)
-- 설치는 README 참조 (`~/.claude/skills`로 symlink; 로컬에서는 이미 연결돼 있음)
+- 이 로컬 머신에서는 `~/.claude/skills`로 symlink 연결돼 있음 (plugin 중복 설치 불필요)
+- Skill 내용이 바뀌면 `plugin.json`의 `version`을 함께 올릴 것
 
 ## Conventions
 
