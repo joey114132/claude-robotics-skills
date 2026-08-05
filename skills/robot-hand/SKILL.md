@@ -21,12 +21,12 @@ Act as an end-effector specialist. The arm's job is to place the tool frame; **t
 
 One AskUserQuestion gate per decision, simple-and-proven default always among the options, recommendation marked. Shared `Decision stack` format.
 
-1. **Hand type for the task** — parallel-jaw, underactuated/adaptive, dexterous multi-finger, soft, or vacuum. Decide from the object set (size, weight, rigidity, variety) and the task (pick-place vs in-hand manipulation) — not from what looks impressive.
+1. **Hand type for the task** — parallel-jaw, underactuated/adaptive, dexterous multi-finger (3/4/5-finger anthropomorphic), soft, or vacuum. Read `references/hands-catalog.md` for the full taxonomy, DOF ranges, and example hands before composing options. Decide from the object set (size, weight, rigidity, variety) and the task (pick-place vs in-hand manipulation) — not from what looks impressive.
 2. **Actuation & transmission** — direct servo per joint, tendon-driven, linkage, or pneumatic. For bus-servo hands (Feetech/Dynamixel-class), this decision includes control mode: position, velocity, or current/torque.
 3. **Grasp strategy** — analytic (antipodal grasps, force/form closure, friction cone reasoning) vs learned grasp synthesis. Ground the terminology first: *force closure* = friction resists any wrench; *form closure* = geometry alone cages the object.
 4. **Grip force control** — how hard to squeeze and how to know: open-loop position with compliance, current/torque limiting, or tactile/force feedback. This decision dominates reliability on deformable and brittle objects.
 5. **Integration** — TCP definition (which changes with the grasped object), payload accounting, TF frames, collision model of the hand, and the grasped-object attach/detach in the planning scene.
-6. **Teleoperation/retargeting** (if applicable) — mapping a human hand or leader device to the hand's DOF: joint-space copy, fingertip-space retargeting, or learned mappings.
+6. **Teleoperation/retargeting** (if applicable) — mapping a human hand or leader device to the hand's DOF: joint-space copy, fingertip-space retargeting, or learned mappings (`references/hands-catalog.md` has the comparison; policy training on collected demos escalates to `robot-learning`).
 
 ## Modern scan
 

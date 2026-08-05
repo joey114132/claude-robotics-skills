@@ -8,7 +8,7 @@ Claude Code용 robotics 의사결정 skill 모음입니다.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-D97757)](https://github.com/joey114132/claude-robotics-skills)
-[![Skills](https://img.shields.io/badge/skills-4-brightgreen)](#-skills)
+[![Skills](https://img.shields.io/badge/skills-7-brightgreen)](#-skills)
 
 </div>
 
@@ -21,7 +21,10 @@ Claude Code용 robotics 의사결정 skill 모음입니다.
 | 🧠 | [`robotics-advisor`](skills/robotics-advisor/SKILL.md) | 로봇 문제를 kinematics·dynamics·control **기본기**부터 정리하고, web/arXiv에서 검증한 최신 기법을 나란히 option으로 제시합니다. |
 | 🛰️ | [`ros2-master`](skills/ros2-master/SKILL.md) | ROS 2 architect — topic/service/action, lifecycle node, QoS, executor, ros2_control 같은 설계 결정을 함께 내립니다. |
 | 🦾 | [`robot-arm`](skills/robot-arm/SKILL.md) | URDF 모델링 → IK → hardware interface → MoveIt 2 → calibration → safety까지, robot arm 통합 pipeline을 단계별로 진행합니다. |
-| ✋ | [`robot-hand`](skills/robot-hand/SKILL.md) | Gripper/hand 선택, grasp 전략(force/form closure), grip force control, teleop retargeting 등 end-effector 결정을 담당합니다. |
+| ✋ | [`robot-hand`](skills/robot-hand/SKILL.md) | Gripper/hand 선택(parallel-jaw부터 5-finger anthropomorphic까지), grasp 전략(force/form closure), grip force control, in-hand manipulation, teleop retargeting을 담당합니다. |
+| 🛞 | [`robot-mobile`](skills/robot-mobile/SKILL.md) | Mobile base — SLAM vs prebuilt map, localization, Nav2 planner/costmap, docking, multi-floor navigation 결정을 진행합니다. |
+| 🚦 | [`robot-fleet`](skills/robot-fleet/SKILL.md) | Multi-robot — Open-RMF, fleet 관리, traffic 협상, 공유 자원(문·lift·충전기), task dispatch, 대규모 DDS discovery를 다룹니다. |
+| 🎓 | [`robot-learning`](skills/robot-learning/SKILL.md) | Teleop demonstration 수집부터 imitation learning·RL·pretrained policy 선택, 평가 protocol, safety wrapper 배포까지 결정합니다. |
 
 ## 🔁 동작 방식
 

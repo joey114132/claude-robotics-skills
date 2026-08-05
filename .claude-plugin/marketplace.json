@@ -9,7 +9,7 @@
     {
       "name": "robotics-skills",
       "source": "./",
-      "description": "Four choose-and-loop robotics advisors: robotics-advisor, ros2-master, robot-arm, robot-hand.",
+      "description": "Seven choose-and-loop robotics advisors: robotics-advisor, ros2-master, robot-arm, robot-hand, robot-mobile, robot-fleet, robot-learning.",
       "category": "robotics"
     }
   ]

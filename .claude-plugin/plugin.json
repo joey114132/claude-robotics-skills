@@ -2,13 +2,13 @@
   "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
   "name": "robotics-skills",
   "displayName": "Robotics Skills",
-  "version": "0.1.0",
-  "description": "Four choose-and-loop robotics advisors: robotics-advisor (Craig 3rd ed. grounding + modern alternatives), ros2-master (ROS 2 architecture decisions), robot-arm (manipulator integration pipeline), robot-hand (gripper/end-effector control).",
+  "version": "0.2.0",
+  "description": "Seven choose-and-loop robotics advisors: robotics-advisor (fundamentals + modern alternatives), ros2-master (ROS 2 architecture), robot-arm (manipulator integration), robot-hand (grippers to 5-finger dexterous hands), robot-mobile (SLAM/Nav2), robot-fleet (Open-RMF/multi-robot), robot-learning (imitation learning/RL/policies).",
   "author": {
     "name": "joey114132"
   },
   "homepage": "https://github.com/joey114132/claude-robotics-skills",
   "repository": "https://github.com/joey114132/claude-robotics-skills",
   "license": "MIT",
-  "keywords": ["robotics", "ros2", "manipulator", "gripper", "kinematics", "skills"]
+  "keywords": ["robotics", "ros2", "manipulator", "gripper", "dexterous-hand", "kinematics", "navigation", "slam", "open-rmf", "fleet", "imitation-learning", "skills"]
 }
