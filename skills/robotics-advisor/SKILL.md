@@ -38,6 +38,8 @@ The OCR is rough: trust the book for structure, definitions, and method names; r
 
 Search before presenting — the map's "modern counterparts" column gives starting keywords only, not facts. Use WebSearch (libraries, tooling, tutorials, benchmarks) and the arXiv MCP tools (`mcp__arxiv__search_papers`, `mcp__arxiv__semantic_search`) for recent methods. For each candidate, establish: what it improves over the classic method, its cost (complexity, dependencies, compute), and maturity (maintained library vs research code). Don't present anything you couldn't verify — an unverified option gets labeled as such or dropped.
 
+**Answer from the field, not from the machinery.** The user asked about their robot, not about this skill. Keep file paths, snapshot dates, mode menus, and search-tooling caveats out of the answer — they read as scaffolding and cost the reader's trust. A specific fact you could not re-verify this session gets its *currency* hedged, never its identity: keep the section number, library name, or version and mark it as of the last check. Dropping the identifier to stay safe leaves the reader nothing to look up — worse than a citable claim they can check themselves.
+
 Run this scan on **every invocation** — never skip it because an earlier session already searched. If findings contradict or postdate the modern-counterparts table in `references/craig3-map.md`, update that table in the same session — the skill keeps itself current.
 
 ### 4. Present options and let the user choose
@@ -70,7 +72,7 @@ Restate it briefly at each iteration; contradictions with earlier choices are a 
 
 ## Loop modes
 
-Offer the user how they want to run the sequence, then honor it:
+When the work spans more than one decision, offer how to run it — and skip this menu entirely for a single question, where it is noise the user did not ask for:
 
 - **Guided** (default) — one decision per turn, full reasoning, wait for each choice.
 - **Fast-forward** — you pick the recommended option at every gate, state each choice and why in one line, and stop only where the decision genuinely needs the user (irreversible, budget, or hardware-dependent).

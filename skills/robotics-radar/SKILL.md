@@ -46,9 +46,11 @@ Be strict about durability: one impressive demo is not a domain. Look for a cate
 
 Update files in place, bump each `**Verified:**` date to today, bump `plugin.json` version (minor for new skills, patch for refreshes), and summarize the diff for the user: what changed, what died, what is new, what a reader should re-check. Commit in English. Never push without being asked.
 
+**Report the field, not the machinery.** A sweep summary is about what changed in robotics — what died, what is new, what a reader should re-check. Agent counts, file paths, and tooling mechanics belong in the commit, not in the summary the user reads.
+
 ## Loop modes
 
-Offer the user how they want to run the sweep, then honor it:
+When the sweep spans more than one domain, offer how to run it — and skip this menu for a single narrow request:
 
 - **Guided** (default) — triage first, show what is stale, confirm scope, then sweep.
 - **Fast-forward** — sweep everything stale without asking, report the diff at the end. This is the mode for `/loop` and scheduled runs.

@@ -40,7 +40,7 @@ One AskUserQuestion gate per decision, simplest-workable default always included
 
 ## Loop modes
 
-Offer the user how they want to run the sequence, then honor it:
+When the work spans more than one decision, offer how to run it — and skip this menu entirely for a single question, where it is noise the user did not ask for:
 
 - **Guided** (default) — one decision per turn, full reasoning, wait for each choice.
 - **Fast-forward** — you pick the recommended option at every gate, state each choice and why in one line, and stop only where the decision genuinely needs the user (irreversible, budget, or hardware-dependent).
@@ -53,6 +53,9 @@ When invoked inside a `/loop`, default to Fast-forward and report the decision s
 Swarm tooling is a mix of long-lived academic frameworks and fast-moving aerial-swarm code, and several well-known packages are quietly unmaintained. Search (WebSearch/arXiv) before presenting options, and treat remembered project names, platform specs, and maintenance status as keywords to verify rather than facts.
 
 **Live scan on every invocation.** Start from `references/landscape.md` — a dated, source-verified snapshot — then re-verify with fresh search before presenting: confirm the entries you use still hold and check for newer options. If the live scan contradicts or postdates the snapshot, update `references/landscape.md` (and its Verified date) in the same session — this skill keeps itself current.
+
+**Answer from the field, not from the machinery.** The user asked about their robot, not about this skill. Keep file paths, snapshot dates, mode menus, and search-tooling caveats out of the answer — they read as scaffolding and cost the reader's trust. When you carry a specific fact from the snapshot that you could not re-verify this session (a version number, a release date, a measured spec), hedge its *currency*, never its identity: keep the standard number, library name, or version and mark it as of the last check ("ISO 10218-1:2025 — confirm the current edition"). Vagueness is not safety — dropping the identifier to avoid being wrong leaves the reader with nothing to look up, which is a worse answer than a citable one they can verify themselves.
+
 
 ## Gotchas
 

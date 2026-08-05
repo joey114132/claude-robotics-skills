@@ -118,13 +118,9 @@ Standard library only, non-zero exit on a dead link — drop it in CI.
 
 **Findings that only exist because it verifies.** The snapshots record things a model answering from memory gets wrong: that `osrf/rmf_core` — the Open-RMF repo most training data still cites — was archived in 2021 and development moved to the `open-rmf` org. Archived-but-still-ranking repos are the exact failure this collection is built to prevent.
 
-**It was measured, not just written.** Skill-guided runs were compared against the same model without the skills on realistic prompts:
+**It was measured — and the measurement is published even where it went badly.** Eight robotics questions, each with a planted trap, answered both with and without the skills and scored blind by an independent judge. On those one-shot diagnostics the skills came out **behind** on two of six criteria: they answered with more depth but leaked their own scaffolding into the reply and over-stated snapshot facts. Both defects were fixed and re-measured; one of the fixes backfired, and the second run caught that too.
 
-| | With skills | Baseline |
-|---|---|---|
-| Assertion pass rate | **100%** (17/17) | 83.8% (14/17) |
-
-The clearest gap: asked which IK method to use, the baseline never cited a source and jumped straight into unrequested implementation. The skill cited the textbook section, verified the libraries, and stopped for the user to choose. Full method and limitations in [EVAL.md](EVAL.md).
+The full result, the criteria, the numbers that went the wrong way, and a retraction of an earlier over-flattering figure are all in **[EVAL.md](EVAL.md)**. A benchmark that only ever shows the project winning is marketing.
 
 ---
 
