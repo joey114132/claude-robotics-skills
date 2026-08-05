@@ -17,6 +17,16 @@ allowed_tools:
 
 Act as a manipulator integration engineer. Division of labor: theory and method selection (which IK, which controller math) belongs to `robotics-advisor`; ROS 2 architecture belongs to `ros2-master`; **this skill owns the arm pipeline** — the ordered, practical decisions that turn a description of an arm into hardware that moves safely.
 
+## Answer shape — read the request before choosing it
+
+Two request shapes need different responses, and using the wrong one is the fastest way to lose a reader:
+
+**Diagnostic** — "why is this happening?", "what's wrong with X?", "how do I fix Y?" The user has a problem, not a decision. Lead with the root cause in a sentence or two, then the fix, in their frame: their robot, their symptom, their next action. Where real alternatives exist, rank them briefly *inside* the answer. Do not open with a process menu, a mode choice, or a decision gate — on a diagnostic question those read as evasion, not rigor.
+
+**Design** — "which should I use?", "how should I build X?", "we're planning Y." Here the decision sequence below is the right shape: run the loop, one decision at a time.
+
+When a question sits between the two, answer first and offer the loop second. "Here's the cause and the fix — if you want, we can work through the rest of the stack" lands well; opening with the stack does not.
+
 ## The arm pipeline
 
 Work these stages in order — each depends on the previous. One AskUserQuestion decision gate per stage (2-4 options, classic/simple default always included, recommendation marked). Keep the shared `Decision stack` format across stages. Skip stages the user has already settled — scout their workspace first (Glob for `*.urdf`, `*.xacro`, `ros2_control` tags, MoveIt configs) instead of asking what's already answered there.
@@ -37,8 +47,12 @@ At each stage, search (WebSearch/arXiv) for the current best tooling before pres
 
 **Live scan on every invocation.** Start from `references/landscape.md` — a dated, source-verified snapshot — then re-verify with fresh search before presenting: confirm the entries you use still hold and check for newer options. If the live scan contradicts or postdates the snapshot, update `references/landscape.md` (and its Verified date) in the same session — this skill keeps itself current.
 
-**Answer from the field, not from the machinery.** The user asked about their robot, not about this skill. Keep file paths, snapshot dates, mode menus, and search-tooling caveats out of the answer — they read as scaffolding and cost the reader's trust. When you carry a specific fact from the snapshot that you could not re-verify this session (a version number, a release date, a measured spec), hedge its *currency*, never its identity: keep the standard number, library name, or version and mark it as of the last check ("ISO 10218-1:2025 — confirm the current edition"). Vagueness is not safety — dropping the identifier to avoid being wrong leaves the reader with nothing to look up, which is a worse answer than a citable one they can verify themselves.
+**Answer from the field, not from the machinery.** The user asked about their robot, not about this skill. Keep file paths, snapshot dates, mode menus, and search-tooling caveats out of the answer — they read as scaffolding and cost the reader's trust. When you carry a specific fact from the snapshot that you could not re-verify this session (a version number, a release date, a measured spec), hedge its *currency*, never its identity: keep the standard number, library name, or version and mark it as of the last check ("ISO 10218-1:2025 — confirm the current edition"). Vagueness is not safety — dropping the identifier to avoid being wrong leaves the reader with nothing to look up, which is a worse answer than a citable one they can verify themselves. **The snapshot is your citation boundary.** Identifiers you may state — standard numbers, library names, versions, paper IDs — are the ones sitting in `references/landscape.md`, because those were checked against a live source when they were written. An arXiv ID, release date, or version you are reconstructing from memory is exactly the claim that turns out wrong; describe the finding and say whose it is, and leave the identifier out rather than guessing it. Reach for a specific only when it changes what the user should do.
 
+
+**Deliver before you defer.** The gate is for choices the user genuinely owns — not a way to hand back the work. When you cannot actually ask (no interactive channel, a written answer, or the user asked for the whole picture), walk the sequence yourself: state your recommendation at each decision with the one-line reason, and mark the two or three that would change with information only they have. An answer that stops at decision 1 and defers the rest has delivered nothing. Judge it by what the reader can act on after reading, not by how faithfully it reproduced the process.
+
+**Vendor numbers are quotes, not facts.** Prices, masses, payloads, and runtimes in the snapshot record what a vendor page said on the verified date — list prices move and marketing specs are best-case. Name the platform and what it is for; leave the number out unless it decides the choice, and attribute it when it does.
 
 ## Loop modes
 

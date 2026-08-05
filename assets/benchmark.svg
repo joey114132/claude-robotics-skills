@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 554" width="900" height="554" role="img" aria-label="Grouped bar chart: skill-guided answers versus baseline across six expert-quality criteria, 8 blind-judged robotics cases">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 554" width="900" height="554" role="img" aria-label="Grouped bar chart: skill-guided answers versus baseline across six expert-quality criteria, 14 blind-judged robotics cases">
 <style>
     .surface { fill: #FAF9F7; }
     .h1   { fill: #1A1A1A; }
@@ -23,13 +23,13 @@
 <rect class="surface" width="900" height="554" rx="16"/>
 <g font-family="ui-sans-serif,-apple-system,Segoe UI,Inter,Helvetica,Arial,sans-serif">
 <text class="h1" x="40" y="46" font-size="19" font-weight="700">Does the skill actually make the answer more expert?</text>
-<text class="h2" x="40" y="70" font-size="13">8 robotics questions, each with one planted trap a novice misses. Both answers scored blind by an independent judge, 0–2 per case.</text>
+<text class="h2" x="40" y="70" font-size="13">14 robotics questions, each with one planted trap a novice misses. Both answers scored blind by an independent judge, 0–2 per case.</text>
 <circle class="s1" cx="46" cy="92" r="5.5"/>
 <text class="lab" x="58" y="97" font-size="13" font-weight="600">With skill</text>
-<text class="val" x="132" y="97" font-size="13">89% overall</text>
+<text class="val" x="132" y="97" font-size="13">88% overall</text>
 <circle class="s2" cx="238" cy="92" r="5.5"/>
 <text class="lab" x="250" y="97" font-size="13" font-weight="600">Baseline</text>
-<text class="val" x="318" y="97" font-size="13">93% overall</text>
+<text class="val" x="318" y="97" font-size="13">94% overall</text>
 <line class="grid" x1="262.0" y1="100" x2="262.0" y2="470" stroke-width="1"/>
 <text class="ax" x="262.0" y="490" font-size="11" text-anchor="middle">0%</text>
 <line class="grid" x1="398.5" y1="100" x2="398.5" y2="470" stroke-width="1"/>
@@ -43,32 +43,32 @@
 <text class="lab" x="246" y="136" font-size="13.5" font-weight="600" text-anchor="end">Caught the expert trap</text>
 <path class="s1" d="M262 116 h542.0 a4 4 0 0 1 4 4 v12 a4 4 0 0 1 -4 4 h-542.0 z"/>
 <text class="val" x="818.0" y="130" font-size="12.5" font-weight="600">100%</text>
-<path class="s2" d="M262 138 h542.0 a4 4 0 0 1 4 4 v12 a4 4 0 0 1 -4 4 h-542.0 z"/>
-<text class="val" x="818.0" y="152" font-size="12.5" font-weight="600">100%</text>
+<path class="s2" d="M262 138 h522.5 a4 4 0 0 1 4 4 v12 a4 4 0 0 1 -4 4 h-522.5 z"/>
+<text class="val" x="798.5" y="152" font-size="12.5" font-weight="600">96%</text>
 <text class="lab" x="246" y="198" font-size="13.5" font-weight="600" text-anchor="end">Explained the principle</text>
 <path class="s1" d="M262 178 h542.0 a4 4 0 0 1 4 4 v12 a4 4 0 0 1 -4 4 h-542.0 z"/>
 <text class="val" x="818.0" y="192" font-size="12.5" font-weight="600">100%</text>
-<path class="s2" d="M262 200 h542.0 a4 4 0 0 1 4 4 v12 a4 4 0 0 1 -4 4 h-542.0 z"/>
-<text class="val" x="818.0" y="214" font-size="12.5" font-weight="600">100%</text>
+<path class="s2" d="M262 200 h522.5 a4 4 0 0 1 4 4 v12 a4 4 0 0 1 -4 4 h-522.5 z"/>
+<text class="val" x="798.5" y="214" font-size="12.5" font-weight="600">96%</text>
 <text class="lab" x="246" y="260" font-size="13.5" font-weight="600" text-anchor="end">Cited verifiable sources</text>
-<path class="s1" d="M262 240 h473.8 a4 4 0 0 1 4 4 v12 a4 4 0 0 1 -4 4 h-473.8 z"/>
-<text class="val" x="749.8" y="254" font-size="12.5" font-weight="600">88%</text>
-<path class="s2" d="M262 262 h473.8 a4 4 0 0 1 4 4 v12 a4 4 0 0 1 -4 4 h-473.8 z"/>
-<text class="val" x="749.8" y="276" font-size="12.5" font-weight="600">88%</text>
+<path class="s1" d="M262 240 h483.5 a4 4 0 0 1 4 4 v12 a4 4 0 0 1 -4 4 h-483.5 z"/>
+<text class="val" x="759.5" y="254" font-size="12.5" font-weight="600">89%</text>
+<path class="s2" d="M262 262 h483.5 a4 4 0 0 1 4 4 v12 a4 4 0 0 1 -4 4 h-483.5 z"/>
+<text class="val" x="759.5" y="276" font-size="12.5" font-weight="600">89%</text>
 <text class="lab" x="246" y="322" font-size="13.5" font-weight="600" text-anchor="end">Gave real options</text>
 <path class="s1" d="M262 302 h542.0 a4 4 0 0 1 4 4 v12 a4 4 0 0 1 -4 4 h-542.0 z"/>
 <text class="val" x="818.0" y="316" font-size="12.5" font-weight="600">100%</text>
-<path class="s2" d="M262 324 h473.8 a4 4 0 0 1 4 4 v12 a4 4 0 0 1 -4 4 h-473.8 z"/>
-<text class="val" x="749.8" y="338" font-size="12.5" font-weight="600">88%</text>
+<path class="s2" d="M262 324 h522.5 a4 4 0 0 1 4 4 v12 a4 4 0 0 1 -4 4 h-522.5 z"/>
+<text class="val" x="798.5" y="338" font-size="12.5" font-weight="600">96%</text>
 <text class="lab" x="246" y="384" font-size="13.5" font-weight="600" text-anchor="end">No fabricated claims</text>
 <path class="s1" d="M262 364 h405.5 a4 4 0 0 1 4 4 v12 a4 4 0 0 1 -4 4 h-405.5 z"/>
 <text class="val" x="681.5" y="378" font-size="12.5" font-weight="600">75%</text>
-<path class="s2" d="M262 386 h473.8 a4 4 0 0 1 4 4 v12 a4 4 0 0 1 -4 4 h-473.8 z"/>
-<text class="val" x="749.8" y="400" font-size="12.5" font-weight="600">88%</text>
+<path class="s2" d="M262 386 h483.5 a4 4 0 0 1 4 4 v12 a4 4 0 0 1 -4 4 h-483.5 z"/>
+<text class="val" x="759.5" y="400" font-size="12.5" font-weight="600">89%</text>
 <text class="lab" x="246" y="446" font-size="13.5" font-weight="600" text-anchor="end">Answered what was asked</text>
-<path class="s1" d="M262 426 h371.4 a4 4 0 0 1 4 4 v12 a4 4 0 0 1 -4 4 h-371.4 z"/>
-<text class="val" x="647.4" y="440" font-size="12.5" font-weight="600">69%</text>
-<path class="s2" d="M262 448 h507.9 a4 4 0 0 1 4 4 v12 a4 4 0 0 1 -4 4 h-507.9 z"/>
-<text class="val" x="783.9" y="462" font-size="12.5" font-weight="600">94%</text>
-<text class="ax" x="40" y="530" font-size="11.5">Score = share of the maximum across all 8 cases. Judge saw both answers unlabeled, with presentation order alternated.</text>
+<path class="s1" d="M262 426 h327.5 a4 4 0 0 1 4 4 v12 a4 4 0 0 1 -4 4 h-327.5 z"/>
+<text class="val" x="603.5" y="440" font-size="12.5" font-weight="600">61%</text>
+<path class="s2" d="M262 448 h522.5 a4 4 0 0 1 4 4 v12 a4 4 0 0 1 -4 4 h-522.5 z"/>
+<text class="val" x="798.5" y="462" font-size="12.5" font-weight="600">96%</text>
+<text class="ax" x="40" y="530" font-size="11.5">Score = share of the maximum across all 14 cases. Judge saw both answers unlabeled, with presentation order alternated.</text>
 </g></svg>

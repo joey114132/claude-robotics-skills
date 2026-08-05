@@ -118,9 +118,11 @@ Standard library only, non-zero exit on a dead link — drop it in CI.
 
 **Findings that only exist because it verifies.** The snapshots record things a model answering from memory gets wrong: that `osrf/rmf_core` — the Open-RMF repo most training data still cites — was archived in 2021 and development moved to the `open-rmf` org. Archived-but-still-ranking repos are the exact failure this collection is built to prevent.
 
-**It was measured — and the measurement is published even where it went badly.** Eight robotics questions, each with a planted trap, answered both with and without the skills and scored blind by an independent judge. On those one-shot diagnostics the skills came out **behind** on two of six criteria: they answered with more depth but leaked their own scaffolding into the reply and over-stated snapshot facts. Both defects were fixed and re-measured; one of the fixes backfired, and the second run caught that too.
+**It was measured, and the measurement says to use it narrowly.** Across 14 blind-judged questions — 8 diagnostic, 6 design — an unaided strong model beat the skill-guided answers on 10 of them. The skills scored higher on what the answer *contained* (100% vs 96% on delivering the expert insight) and lower on what it *did*: 61% vs 96% on answering the question asked, because they hand back process where a recommendation belongs.
 
-The full result, the criteria, the numbers that went the wrong way, and a retraction of an earlier over-flattering figure are all in **[EVAL.md](EVAL.md)**. A benchmark that only ever shows the project winning is marketing.
+So the honest pitch is not "better answers." For a robotics question you could just ask, asking directly is fine. What survives measurement is the part a one-shot answer benchmark doesn't test: **source-verified snapshots** of facts a model's memory gets wrong, and **decision ordering** for multi-day build work.
+
+Four rounds of fixes, what each one moved, an earlier over-flattering figure and why it was retracted, and the limitations that make this a weak test — all in **[EVAL.md](EVAL.md)**. A benchmark that only ever shows the project winning is marketing.
 
 ---
 

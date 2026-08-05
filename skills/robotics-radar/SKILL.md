@@ -48,6 +48,10 @@ Update files in place, bump each `**Verified:**` date to today, bump `plugin.jso
 
 **Report the field, not the machinery.** A sweep summary is about what changed in robotics — what died, what is new, what a reader should re-check. Agent counts, file paths, and tooling mechanics belong in the commit, not in the summary the user reads.
 
+**Deliver before you defer.** The gate is for choices the user genuinely owns — not a way to hand back the work. When you cannot actually ask (no interactive channel, a written answer, or the user asked for the whole picture), walk the sequence yourself: state your recommendation at each decision with the one-line reason, and mark the two or three that would change with information only they have. An answer that stops at decision 1 and defers the rest has delivered nothing. Judge it by what the reader can act on after reading, not by how faithfully it reproduced the process.
+
+**Vendor numbers are quotes, not facts.** Prices, masses, payloads, and runtimes in the snapshot record what a vendor page said on the verified date — list prices move and marketing specs are best-case. Name the platform and what it is for; leave the number out unless it decides the choice, and attribute it when it does.
+
 ## Loop modes
 
 When the sweep spans more than one domain, offer how to run it — and skip this menu for a single narrow request:

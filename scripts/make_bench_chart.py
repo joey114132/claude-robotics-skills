@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Aggregate blind-judged benchmark grades into assets/benchmark.svg.
 
-    python3 scripts/make_bench_chart.py <workspace-dir>
+    python3 scripts/make_bench_chart.py <workspace-dir> [<workspace-dir> ...]
 
 The workspace holds one directory per case containing grade.json, whose
 answer_one/answer_two blocks each name the file they scored — that filename is
@@ -38,12 +38,12 @@ TRACK_W = W - TRACK_X - 92
 BAR_H, GAP = 20, 2
 
 
-def load(ws: Path) -> tuple[dict, dict, int]:
-    """Return (skill_totals, base_totals, n_cases)."""
+def load(workspaces: list[Path]) -> tuple[dict, dict, int]:
+    """Return (skill_totals, base_totals, n_cases) pooled across workspaces."""
     skill = {k: 0 for k, _ in CRITERIA}
     base = {k: 0 for k, _ in CRITERIA}
     n = 0
-    for gf in sorted(ws.glob("*/grade.json")):
+    for gf in sorted(g for ws in workspaces for g in ws.glob("*/grade.json")):
         g = json.loads(gf.read_text())
         n += 1
         for block in ("answer_one", "answer_two"):
@@ -52,7 +52,7 @@ def load(ws: Path) -> tuple[dict, dict, int]:
             for key, _ in CRITERIA:
                 target[key] += int(a.get(key, 0))
     if not n:
-        sys.exit(f"no grade.json found under {ws}")
+        sys.exit(f"no grade.json found under {[str(w) for w in workspaces]}")
     return skill, base, n
 
 
@@ -136,8 +136,7 @@ def build(skill: dict, base: dict, n: int) -> str:
 def main() -> int:
     if len(sys.argv) < 2:
         sys.exit(__doc__)
-    ws = Path(sys.argv[1])
-    skill, base, n = load(ws)
+    skill, base, n = load([Path(a) for a in sys.argv[1:] if not a.startswith("-")])
     OUT.parent.mkdir(exist_ok=True)
     OUT.write_text(build(skill, base, n))
 

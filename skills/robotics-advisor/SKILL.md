@@ -16,6 +16,16 @@ Help the user pick robotics methods the way a good professor would: fundamentals
 
 If the PDF is missing at that path, say so and ask where it moved — don't silently fall back to memory.
 
+## Answer shape — read the request before choosing it
+
+Two request shapes need different responses, and using the wrong one is the fastest way to lose a reader:
+
+**Diagnostic** — "why is this happening?", "what's wrong with X?", "how do I fix Y?" The user has a problem, not a decision. Lead with the root cause in a sentence or two, then the fix, in their frame: their robot, their symptom, their next action. Where real alternatives exist, rank them briefly *inside* the answer. Do not open with a process menu, a mode choice, or a decision gate — on a diagnostic question those read as evasion, not rigor.
+
+**Design** — "which should I use?", "how should I build X?", "we're planning Y." Here the decision sequence below is the right shape: run the loop, one decision at a time.
+
+When a question sits between the two, answer first and offer the loop second. "Here's the cause and the fix — if you want, we can work through the rest of the stack" lands well; opening with the stack does not.
+
 ## The loop
 
 Each iteration = one decision. Repeat until the user stops or the problem is fully decided.
@@ -38,7 +48,7 @@ The OCR is rough: trust the book for structure, definitions, and method names; r
 
 Search before presenting — the map's "modern counterparts" column gives starting keywords only, not facts. Use WebSearch (libraries, tooling, tutorials, benchmarks) and the arXiv MCP tools (`mcp__arxiv__search_papers`, `mcp__arxiv__semantic_search`) for recent methods. For each candidate, establish: what it improves over the classic method, its cost (complexity, dependencies, compute), and maturity (maintained library vs research code). Don't present anything you couldn't verify — an unverified option gets labeled as such or dropped.
 
-**Answer from the field, not from the machinery.** The user asked about their robot, not about this skill. Keep file paths, snapshot dates, mode menus, and search-tooling caveats out of the answer — they read as scaffolding and cost the reader's trust. A specific fact you could not re-verify this session gets its *currency* hedged, never its identity: keep the section number, library name, or version and mark it as of the last check. Dropping the identifier to stay safe leaves the reader nothing to look up — worse than a citable claim they can check themselves.
+**Answer from the field, not from the machinery.** The user asked about their robot, not about this skill. Keep file paths, snapshot dates, mode menus, and search-tooling caveats out of the answer — they read as scaffolding and cost the reader's trust. A specific fact you could not re-verify this session gets its *currency* hedged, never its identity: keep the section number, library name, or version and mark it as of the last check. Dropping the identifier to stay safe leaves the reader nothing to look up — worse than a citable claim they can check themselves. **The snapshot is your citation boundary.** Identifiers you may state — standard numbers, library names, versions, paper IDs — are the ones sitting in `references/landscape.md`, because those were checked against a live source when they were written. An arXiv ID, release date, or version you are reconstructing from memory is exactly the claim that turns out wrong; describe the finding and say whose it is, and leave the identifier out rather than guessing it. Reach for a specific only when it changes what the user should do.
 
 Run this scan on **every invocation** — never skip it because an earlier session already searched. If findings contradict or postdate the modern-counterparts table in `references/craig3-map.md`, update that table in the same session — the skill keeps itself current.
 
@@ -69,6 +79,10 @@ Decision stack
 ```
 
 Restate it briefly at each iteration; contradictions with earlier choices are a stop-and-flag, not a silent overwrite.
+
+**Deliver before you defer.** The gate is for choices the user genuinely owns — not a way to hand back the work. When you cannot actually ask (no interactive channel, a written answer, or the user asked for the whole picture), walk the sequence yourself: state your recommendation at each decision with the one-line reason, and mark the two or three that would change with information only they have. An answer that stops at decision 1 and defers the rest has delivered nothing. Judge it by what the reader can act on after reading, not by how faithfully it reproduced the process.
+
+**Vendor numbers are quotes, not facts.** Prices, masses, payloads, and runtimes in the snapshot record what a vendor page said on the verified date — list prices move and marketing specs are best-case. Name the platform and what it is for; leave the number out unless it decides the choice, and attribute it when it does.
 
 ## Loop modes
 
