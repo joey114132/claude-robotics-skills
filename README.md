@@ -39,6 +39,10 @@ done
 
 `robotics-advisor`는 Craig, *Introduction to Robotics: Mechanics and Control* (3rd ed.) PDF를 참조합니다. **책은 저작권이 있어 이 repo에 포함되지 않습니다** — 본인 소유의 PDF를 `~/Downloads/Introduction-to-Robotics-3rd-edition.pdf`에 두거나, `skills/robotics-advisor/SKILL.md`와 `references/craig3-map.md`의 경로를 수정해 주세요. 동봉된 page map은 408-page 스캔본 기준입니다.
 
+## Evaluation
+
+Skill 적용/미적용 비교 평가 결과는 [EVAL.md](EVAL.md)를 참조해 주세요 (iteration 1: with-skill 100% vs baseline 83.8%).
+
 ## License
 
 MIT
