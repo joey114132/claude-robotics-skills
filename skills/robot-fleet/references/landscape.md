@@ -25,7 +25,7 @@
 
 ## Multi-robot middleware / discovery at scale
 
-- **rmw_zenoh** — ROS 2 RMW implementation built on the Zenoh protocol; currently Quality Level 2 (not yet Tier-1), with Tier-1 promotion targeted for a subsequent release per an open tracking issue; available on ROS 2 Jazzy and later only (not Humble). Status: maintained, pre-Tier-1. Source: https://github.com/ros2/rmw_zenoh and https://github.com/ros2/rmw_zenoh/issues/265
+- **rmw_zenoh** — ROS 2 RMW implementation built on the Zenoh protocol; currently Quality Level 2 (not yet Tier-1), with Tier-1 promotion targeted for a subsequent release per an open tracking issue; available on ROS 2 Jazzy and later only (not Humble) — per the repo README, distro branches exist but Humble cannot communicate with Iron-and-newer distros over rmw_zenoh because type hashes are embedded in Zenoh keyexpressions. Status: maintained, pre-Tier-1. Source: https://github.com/ros2/rmw_zenoh and https://github.com/ros2/rmw_zenoh/issues/265
 - **Fast DDS Discovery Server** — centralized discovery mode for DDS/ROS 2 (vs. default peer-to-peer multicast discovery); traffic scales linearly with fleet size instead of quadratically, and new robots don't require config changes on existing ones. Cited as enabling OTTO Motors to scale to 100+ robots per facility after migrating to ROS 2. Status: maintained. Source: https://husarnet.com/blog/ros2-dds-discovery-server
 
 ## Task allocation research (arXiv)

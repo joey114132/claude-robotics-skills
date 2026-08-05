@@ -1,78 +1,71 @@
 # Evaluation
 
-Everything here is the measured result. The skills lose most of it.
+Everything here is the measured result, through seven rounds of fix-and-remeasure. The final verdict is parity, not superiority — published as measured.
 
 ## Headline
 
-Across **14 blind-judged robotics questions**, an unaided strong model beat the skill-guided answers on 10, the skills won 3, and 1 tied. Two question shapes were tested and the skills lost both.
+Final round, all **14 blind-judged robotics questions**: skills won 6, baseline won 7, 1 tie. Total rubric score 92% vs 94%.
+
+That is a draw within single-run noise — and it took seven rounds to get there from a clear loss. The first blind measurement was 2 wins against 10.
 
 ![Benchmark: skill-guided vs baseline across six expert-quality criteria, 14 cases](assets/benchmark.svg)
 
-The split is consistent enough to state as a finding: **the skills win on what the answer contains and lose on what the answer does.**
-
 | Criterion | With skill | Baseline |
 |---|---|---|
-| Delivered the expert value | **100%** | 96% |
-| Explained the principle | **100%** | 96% |
-| Gave real options | **100%** | 96% |
-| Cited verifiable sources | 89% | 89% |
-| No fabricated claims | 75% | **89%** |
-| Answered what was asked | 61% | **96%** |
+| Caught the trap / delivered the expert value | **100%** | 96% |
+| Answered what was asked | **100%** | 82% |
+| Explained the principle | 96% | **100%** |
+| Gave real options | 96% | **100%** |
+| Cited verifiable sources | 82% | **86%** |
+| No fabricated claims | 79% | **100%** |
+
+The shape of the result is stable across rounds: **the skills are strongest on substance** (they caught every planted trap, and judges repeatedly called their answers the deeper ones) **and lose on fabrication discipline** — carrying specifics out of their snapshots that a reader of one page cannot verify.
 
 ## Method
 
-Two benchmarks, same six-criteria rubric, same blind protocol.
+Two question shapes, same six-criteria rubric, same protocol. **Diagnostic** (8 cases): "why is this happening" questions, each with one planted trap an expert catches — e.g. "12-DOF quadruped on hobby RC servos, MPC or RL for trotting?", where the right answer refuses the framing because position-only servos cannot do dynamic locomotion. **Design** (6 cases): "we're building X, how should we approach it", where imposing the right decision order is the graded value.
 
-**Diagnostic shape** (8 cases) — "why is this happening / how do I fix it", each with one **planted trap**: a root cause an expert catches and a plausible answer misses. Example: "12-DOF quadruped on hobby RC servos, MPC or RL for trotting?" The correct answer refuses the framing, because position-only high-reduction servos cannot do dynamic locomotion at all. *Result: skill 2, baseline 5, 1 tie.*
+Each question answered twice — once following the relevant skill, once by the same model unaided. An independent judge scored both **without knowing which was which**, presentation order alternated. Every case directory keeps both answers and the judge's `grade.json`.
 
-**Design shape** (6 cases) — "we're building X, how should we approach it", where a decision sequence is the right answer shape and the graded value is imposing an order on the decisions. This was added specifically because the diagnostic set tested the wrong mode for a decision-advisor tool. *Result: skill 1, baseline 5.*
+## The seven rounds — what moved and what didn't
 
-Each question was answered twice — once by an agent following the relevant skill, once by the same model unaided. An independent judge scored both **without being told which was which**, with presentation order alternated across cases to cancel position bias. Every case directory keeps both answers and the judge's `grade.json`, so the scoring can be re-read rather than taken on trust.
+| Round | Change | Cases (S-B-T) | Scope | Fabrication |
+|---|---|---|---|---|
+| v2 | original skills | 2-5-1 (of 8) | 56% | 69% |
+| v3-v4 | gate the mode menu; hedge unverifiables | 2-5-1 (of 8) | 69% | 75% |
+| design set | (same skills, right question shape) | 1-5-0 (of 6) | 50% | 75% |
+| v5 | **structural inversion** | 4-7-1 (of 12) | 96% | 83% |
+| v6 | inline source attribution | 6-6-0 (of 12) | 100% | 83% |
+| v7 (final) | snapshot as hard citation boundary | **6-7-1 (of 14)** | **100%** | 79% |
 
-## Why the skills lose
+Two findings matter more than the tally:
 
-Judges repeatedly said the skill-guided answers were the deeper ones — "nails the dependency chain explicitly", "the two items most answers miss", "deeper physics", "the only answer with real citations". They lost anyway, on two things.
+**Structure beat wording.** Three rounds of added rules moved almost nothing. What worked was inverting the document: the decision sequence became an internal completeness checklist instead of the reply's outline, and delivery rules ("verdict first, deliver everything in one pass, defer only when you can actually ask") moved to the top. Scope went from the skills' worst criterion (56%) to their best (100%) — they now both answer the question *and* out-cover the baseline.
 
-**They deliver the process instead of the answer.** On one design case the skill-guided answer "defers 6 of 7 decisions and spends a third of the page on workflow meta." On a diagnostic case it "burns a full section on an unrequested A/B/C/D consulting intake menu." An advisor that hands back a framework instead of a recommendation has delivered nothing, and scope scored 61% against the baseline's 96%.
-
-**They reach for specifics they cannot stand behind.** Stale list prices, a platform mass that does not match the vendor, arXiv IDs reconstructed rather than looked up. The baseline says vaguer things and so has less to be wrong about — 89% vs 75% on fabrication.
-
-## What was tried
-
-Four rounds of fixes, each measured:
-
-1. **Gated the loop-mode menu** to multi-decision work instead of every answer. Scope 56% → 69%.
-2. **Hedged unverifiable snapshot facts.** Fabrication 69% → 75% — but the skills responded by dropping standard *numbers* ("the national robot safety standard"), costing source quality 100% → 88%. The rule now hedges a claim's currency while keeping its identity.
-3. **Added an answer-shape rule** — diagnose diagnostics, sequence design questions. No measurable effect: one section cannot outweigh a document whose whole gravity is the decision sequence.
-4. **Made the snapshot the citation boundary**, and added *deliver before you defer* and *vendor numbers are quotes, not facts*. Not yet measured — the honest state is that these address the two failure modes above but have not been proven to fix them.
-
-The lesson from round 3 is the load-bearing one: this is a structural property of a decision-loop tool, not a wording bug.
+**Fabrication is the unsolved criterion, and the last fix overcorrected.** Judges consistently flagged specifics the answer could not stand behind — feature lists, prices, reconstructed arXiv IDs. Tightening the citation boundary helped some cases and hurt others: one final-round answer was scored down for being "correct but generic, cites no specific tools", exactly the over-caution the rule induced. Calibrating "say the checkable specific, drop the unverifiable one" is genuinely hard for a one-page answer with live search disabled.
 
 ## Limitations
 
-- **Live search was unavailable in every run.** That disables the mechanism these skills are built around, so this measures the snapshots alone.
-- **Single-turn evaluation penalizes an interactive design.** The skills stop at decision gates because a real user would answer them; a judge reading one page scores that as work not done. Some of the 61% scope gap is this artifact, not a defect — but the mode menus and assumption tables are noise either way.
-- One run per condition; no variance estimate. The judge is a language model applying a rubric, not a practicing roboticist.
+- **Live search was unavailable in every run** — the mechanism the skills are built around (verify, then speak) was disabled, which is precisely why snapshot specifics kept scoring as unverifiable.
+- Single-turn evaluation penalizes an interactive design; one run per condition; the judge is a language model applying a rubric, not a practicing roboticist.
+- Author and fixer of the skills also designed the benchmark. The blindness and fixed rubric limit, but do not eliminate, that conflict.
 
 ## An earlier number, retracted
 
-An earlier iteration reported **100% vs 83.8%** in favor of the skills. Do not trust it: the assertions were written by the same author as the skills and rewarded the skills' own output format — present options, cite the textbook, stop at a gate — rather than answer quality. The blind rubric replaced it and reached the opposite conclusion. It is recorded here only so nobody re-quotes it.
+An earlier iteration reported **100% vs 83.8%** in favor of the skills. Do not trust it: its assertions rewarded the skills' own output format rather than answer quality. The blind rubric replaced it. Recorded here only so nobody re-quotes it.
 
 ## What this means for using the collection
 
-Take the honest version: for a robotics question you could just ask, **asking directly is fine, and often better.** The measured value of this collection is narrower than "better answers":
+For a robotics question you could just ask, **asking directly is fine** — the base model catches the classic traps on its own. What the measurements say the skills actually add:
 
-- **The verified snapshots.** `references/landscape.md` records things a model's memory gets wrong — that `osrf/rmf_core` was archived in 2021 and Open-RMF moved, which ISO revision is actually in force, which repo is dead. That part is checkable: `scripts/check_sources.py` re-validates every source URL.
-- **The decision order** for multi-day build work, where knowing what must be settled first is the whole game.
+- **Completeness under pressure** (100% expert value, 100% scope): the internal checklist reliably surfaces the parts of a build the unaided answer covers only at 82-96%.
+- **The verified snapshots**: `references/landscape.md` records what a model's memory gets wrong — archived repos, superseded standards — and `scripts/check_sources.py` re-validates every source URL on demand.
+- With **live search enabled** (normal operation, unlike this benchmark), the fabrication weakness is addressed by design: the rule is verify-then-speak, and what was measured here is the skills running with their verification amputated.
 
-Neither of those is what a one-shot answer benchmark measures.
+That last point is the fair-test question this benchmark leaves open: whether verify-then-speak, actually allowed to verify, converts the fabrication deficit into a strength. Measuring that needs live search, multi-turn scenarios, and recency-sensitive questions.
 
 ## Reproducing
 
 ```sh
 python3 scripts/make_bench_chart.py <workspace> [<workspace> ...]
 ```
-
-## A fairer test would need
-
-Live search enabled, multi-turn scenarios where gates actually get answered, questions whose answers turned over recently enough that a stale one is detectably wrong, and a human robotics reviewer alongside the model judge.
