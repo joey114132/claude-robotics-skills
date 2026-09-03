@@ -66,6 +66,18 @@ Same shape as `robotics-advisor`: each iteration settles one decision, then surf
 
 **Live scan on every invocation.** Start from `references/landscape.md` — a dated, source-verified snapshot — then re-verify with fresh search before presenting: confirm the entries you use still hold and check for newer options. If the live scan contradicts or postdates the snapshot, update `references/landscape.md` (and its Verified date) in the same session — this skill keeps itself current.
 
+## Static QoS audit
+
+Before answering any "why doesn't my subscriber receive" or QoS question on a live Python source tree, run
+`python3 scripts/qos_audit.py <src_root>` — it statically resolves every `create_publisher`/`create_subscription`
+call's QoS and reports mismatches, instead of guessing from memory. Exit code 1 means it found one.
+- **INCOMPATIBLE** — same topic, in-repo pub and sub, and their QoS cannot connect (sub=RELIABLE vs pub=BEST_EFFORT,
+  or sub=TRANSIENT_LOCAL vs pub=VOLATILE). This is the root cause to report; fix the looser side to match.
+- **ONE-SIDED** — only a pub or only a sub found for that topic in this tree; the other side is external
+  (another package, another language) and cannot be verified statically — don't claim compatibility either way.
+- **UNRESOLVED** — topic or QoS built from something the script can't trace (a runtime variable, a function call);
+  check those by hand.
+
 ## Gotchas
 
 - **QoS mismatch fails silently.** "I publish but nothing arrives" is a QoS incompatibility until proven otherwise — check `ros2 topic info -v` before touching code.
