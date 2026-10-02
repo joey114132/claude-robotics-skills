@@ -122,6 +122,19 @@ Two effects are large and reproduce; they cancel. The skills **cite about 20 poi
 
 [EVAL.md](EVAL.md) holds the nine-round blind benchmark history. The `evals/` directory holds the current suite for `claude plugin eval`: 14 trap cases that grade answer quality and 30 routing cases that check the right skill fires. EVAL.md has the exact commands and results.
 
+First results, 2026-10-02 (plugin 0.7.0, one run per arm, skill / baseline):
+
+| Grader | Opus 5.5 | Sonnet 5.5 |
+|---|---|---|
+| Caught the trap | 14/14 / 14/14 | 14/14 / 14/14 |
+| Explained the principle | 14/14 / 13/14 | 13/14 / 14/14 |
+| Committed to a recommendation | 14/14 / 14/14 | 14/14 / 14/14 |
+| Sourced decaying figures | 9/14 / 9/14 | 7/14 / 9/14 |
+
+Both current models catch every trap without the skills, so this suite sits at the ceiling and shows parity again. Routing held at 60 of 60 runs before and after the description cleanup, which cut the always-on cost from about 4,850 to 3,975 tokens.
+
+![Quality suite on Opus 5.5: with skill vs baseline per grader](assets/eval-quality-claude-opus-5-5.svg)
+
 ---
 
 ## Self-maintaining
