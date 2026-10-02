@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/hero.svg" alt="claude-robotics-skills — fundamentals first, modern options verified, you choose, then loop" width="100%">
+<img src="assets/hero.svg" alt="claude-robotics-skills: fundamentals first, modern options verified, a clear verdict, your call" width="100%">
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-D97757)](https://github.com/joey114132/claude-robotics-skills)
@@ -19,10 +19,10 @@ Ask any AI assistant *"which IK solver should I use?"* and you get a confident p
 
 Robotics punishes that. The field is old enough to have deep fundamentals and fast enough that half the tooling you remember is stale.
 
-**These skills fix both ends.** Every answer starts from the classic method and *why* it works, then adds modern alternatives that were verified against live sources in that same conversation. Then it stops and lets you choose.
+**These skills fix both ends.** Every answer starts from the classic method and *why* it works, then adds modern alternatives that were verified against live sources in that same conversation. Then it gives a verdict, names the real alternatives, and leaves the call to you.
 
 <div align="center">
-<img src="assets/loop.svg" alt="The choose-and-loop cycle: frame one decision, ground it in fundamentals, scan live for modern options, you choose, apply, repeat" width="100%">
+<img src="assets/loop.svg" alt="The answer cycle: split the request into ordered decisions, ground each in fundamentals, scan live for modern options, give a verdict, then you choose where the choice is yours" width="100%">
 </div>
 
 ---
@@ -81,48 +81,46 @@ You never need to remember which one to call. Describe your robot and the right 
 
 ## How it works
 
-Each skill runs the same loop, one decision at a time.
+Each skill works through the same sequence internally and answers in one pass.
 
-**1 · Frame** — pin down exactly one decision, in dependency order. Broad requests get decomposed and started upstream, because downstream choices depend on the answer.
+**1 · Frame** — split the request into decisions in dependency order. Broad requests start upstream, because downstream choices depend on the answer.
 
 **2 · Fundamentals** — the classic method and *why it's shaped that way*. Terminology gets defined in plain language before the math.
 
 **3 · Modern scan** — a live search, every invocation. Each skill ships a dated snapshot of its field, but treats it as a starting point to re-verify, never as an answer.
 
-**4 · You choose** — 2–4 real options via a selection prompt, the classic method always among them, one marked as recommended with the reason stated.
+**4 · Verdict, then options** — the recommendation comes first with the reason. Where the tradeoff is real, the strongest alternative follows, and the classic method stays on the table.
 
-**5 · Apply, then loop** — the choice goes on a running decision stack and the next decision surfaces. A choice that contradicts an earlier one stops the loop and says so, instead of silently overwriting it.
+**5 · You choose where the choice is yours** — in a live session, the skill stops at a choice that is truly yours (irreversible, budget, hardware you own) after stating its recommendation. Everywhere else it delivers the whole answer and closes with the few open questions that would change it.
 
-### Three ways to run it
-
-| Mode | What happens |
-|------|--------------|
-| **Guided** *(default)* | One decision per turn with full reasoning. You're in the loop for each. |
-| **Fast-forward** | It takes the recommended option at every gate and reports each choice in one line, stopping only where the decision is genuinely yours — irreversible, budget, or hardware-dependent. |
-| **Audit** | No new decisions. It walks your existing setup against the sequence and reports what's unset, risky, or contradictory. |
-
-Inside a `/loop`, Fast-forward is the default and the decision stack is reported each iteration.
+Inside a `/loop` or a scheduled run, each skill takes its recommended option at every decision and reports the decisions it made at the end. Guided, Fast-forward and Audit modes exist only in [`robotics-radar`](skills/robotics-radar/SKILL.md), the maintenance sweep.
 
 ---
 
 ## Why you'd trust it
 
-**Nothing is presented that wasn't checked.** Every entry in every landscape snapshot carries a live source URL or an arXiv ID. A link checker ships with the repo:
+**Nothing is presented that wasn't checked.** Every entry in every landscape snapshot carries a live source URL (an `arxiv.org/abs` link for papers). A link checker ships with the repo:
 
 ```sh
 python3 scripts/check_sources.py            # every skill, live URL check
 python3 scripts/check_sources.py --offline  # format only, no network
 ```
 
-Standard library only, non-zero exit on a dead link — drop it in CI.
+Standard library only. It exits non-zero on an entry without a source URL, a dead link, or a snapshot older than 180 days, so you can drop it in CI.
 
 **Findings that only exist because it verifies.** The snapshots record things a model answering from memory gets wrong: that `osrf/rmf_core` — the Open-RMF repo most training data still cites — was archived in 2021 and development moved to the `open-rmf` org. Archived-but-still-ranking repos are the exact failure this collection is built to prevent.
 
-**Measured over nine blind rounds, and the result is parity — stated as such, including a headline this project previously got wrong.** Fourteen questions, each answered with and without the skills, scored by a judge who did not know which was which. Latest round: **93% vs 93%.**
+**Measured over nine blind rounds, and the result is parity. This project previously reported a headline that was wrong.** Fourteen questions, each answered with and without the skills, scored by a judge who did not know which was which. Latest round: **93% vs 93%.**
 
-Two effects are large and reproduce; they cancel. The skills **cite about 20 points better** (100% vs 79% on verifiable sources — they pass through the source URL their snapshots already hold, instead of asserting facts bare) and score **about 25 points worse on fabrication discipline** — in a benchmark where their verify-then-speak mechanism was disabled throughout. On catching planted expert traps, explaining the principle, and giving real options they run at 100%.
+Two effects are large and reproduce; they cancel. The skills **cite about 20 points better** (100% vs 79% on verifiable sources — they pass through the source URL their snapshots already hold, instead of asserting facts bare) and score **21 to 31 points worse on fabrication discipline** (29 in the latest round). That benchmark disabled their verify-then-speak mechanism throughout. On catching planted expert traps, explaining the principle, and giving real options they run at 100%.
 
 **[EVAL.md](EVAL.md)** has the parts that matter more than the score: why an earlier "8 wins vs 4" headline was retracted as noise (wins swing 4-to-8 across rounds on identical questions), why the "fabrication" criterion turned out not to be measuring fabrication — 29 of 29 cited paper IDs came from verified snapshots, none invented — and the four fixes that never moved it. A benchmark that only ever shows the project winning is marketing.
+
+---
+
+## Measuring it
+
+[EVAL.md](EVAL.md) holds the nine-round blind benchmark history. The `evals/` directory holds the current suite for `claude plugin eval`: 14 trap cases that grade answer quality and 30 routing cases that check the right skill fires. EVAL.md has the exact commands and results.
 
 ---
 
@@ -130,7 +128,7 @@ Two effects are large and reproduce; they cancel. The skills **cite about 20 poi
 
 Robotics snapshots rot. Two mechanisms keep these from going stale:
 
-**Per-invocation.** Every skill re-verifies live before answering and rewrites its own snapshot in place when reality has moved past it. Using the skill maintains it.
+**Per-invocation.** Every skill re-verifies live before answering. In a checkout, or the manual symlink install below, it also rewrites its own snapshot in place when reality has moved past it. A plugin install copies the files into a versioned cache directory, so a rewrite there lasts only until the plugin updates, and it never reaches the repo or other users. Durable refreshes come from running `robotics-radar` in a checkout and pushing the result.
 
 **Periodic sweeps.** [`robotics-radar`](skills/robotics-radar/SKILL.md) orchestrates parallel research agents across stale domains, then a second adversarial pass that tries to *disprove* each finding and deletes what it can't confirm. It also hunts for coverage gaps — robot types and paradigms no skill covers yet — and adds new skills for the ones that turn out to be real and durable.
 
@@ -139,7 +137,7 @@ Update the robotics skills          # triage, sweep, verify, report the diff
 Audit the robotics skills           # read-only staleness and dead-link report
 ```
 
-Run it on a schedule and the collection keeps itself current without you.
+Run it on a schedule in a checkout and the collection keeps itself current without you.
 
 ---
 
@@ -169,7 +167,7 @@ done
 
 ## Contributing
 
-New skills follow the house structure: a decision sequence in dependency order, Loop modes, a Modern scan that re-verifies live, and a Gotchas section of real, expensive traps — not generic advice. Landscape entries need a live source. See [CLAUDE.md](CLAUDE.md) for the conventions and run `scripts/check_sources.py` before opening a PR.
+New skills follow the house structure: a How to answer block copied from a sibling skill, a decision sequence in dependency order, a Modern scan that re-verifies live, and a Gotchas section of real, expensive traps — not generic advice. Landscape entries need a live source. See [CLAUDE.md](CLAUDE.md) for the conventions and run `scripts/check_sources.py` before opening a PR.
 
 ## License
 

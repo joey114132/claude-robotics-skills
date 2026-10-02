@@ -1,16 +1,12 @@
 ---
 name: robot-soft
-description: Soft and compliant robotics advisor — continuum bodies, soft actuation, and compliance decisions in the same fundamentals-first, choose-and-loop style as robotics-advisor. Use when the user works on a soft, compliant, or continuum robot — pneumatic/hydraulic actuators, PneuNets and fiber-reinforced bending actuators, McKibben/pneumatic artificial muscles, tendon-driven continuum arms and catheters, dielectric elastomer or HASEL electrohydraulic actuators, shape-memory alloy actuators, series-elastic and variable-stiffness actuation, jamming, soft grippers, modeling soft bodies (constant curvature, Cosserat rod, FEM), soft/stretchable proprioceptive sensing, silicone molding and 3D-printed soft parts, or asks whether compliance beats a rigid design. Presents 2-4 verified options per decision and loops to the next decision after each choice.
-allowed_tools:
+description: Soft and compliant robotics advisor covering continuum bodies, soft actuation, and compliance decisions. Use when the user works on a soft, compliant, or continuum robot — pneumatic/hydraulic actuators, PneuNets and fiber-reinforced bending actuators, McKibben/pneumatic artificial muscles, tendon-driven continuum arms and catheters, dielectric elastomer or HASEL electrohydraulic actuators, shape-memory alloy actuators, series-elastic and variable-stiffness actuation, jamming, soft grippers, modeling soft bodies (constant curvature, Cosserat rod, FEM), soft/stretchable proprioceptive sensing, silicone molding and 3D-printed soft parts, or asks whether compliance beats a rigid design.
+allowed-tools:
   - Read
-  - Write
-  - Edit
-  - Bash
   - Grep
   - Glob
   - WebSearch
   - WebFetch
-  - AskUserQuestion
 ---
 
 # Robot Soft
@@ -57,7 +53,7 @@ The simplest workable option stays on the table at every step.
 
 Soft robotics moves through materials and fabrication as much as through software, and vendor claims age badly. Search (WebSearch/WebFetch/arXiv) before presenting options, and treat remembered actuator specs, strain figures, simulator names, and gripper payloads as keywords to verify rather than facts to quote.
 
-**Live scan on every invocation.** Start from `references/landscape.md` — a dated, source-verified snapshot — then re-verify with fresh search before presenting: confirm the entries you use still hold and check for newer options. If the live scan contradicts or postdates the snapshot, update `references/landscape.md` (and its Verified date) in the same session — this skill keeps itself current.
+**Live scan on every invocation.** Start from `references/landscape.md`, a dated snapshot in which every entry carries its source, then re-verify with fresh search before presenting: confirm that the entries you use still hold and look for newer options. When the live scan contradicts or postdates the snapshot, answer from the fresh finding. Write it back into `references/landscape.md`, bumping its Verified date, only when this skill directory is a git checkout that the user maintains; a marketplace install lives in a plugin cache that the next update overwrites.
 
 ## Gotchas
 
@@ -65,6 +61,8 @@ Soft robotics moves through materials and fabrication as much as through softwar
 - **Hysteresis, not model error, is what defeats the first controller.** Silicone creep plus tendon friction make the mapping from command to shape path-dependent and non-Markovian — the same pressure lands somewhere different depending on approach direction. Recalibrating a static model harder will not fix it; closed-loop shape feedback or a history-aware model will.
 - **The support equipment is the robot.** A pneumatic soft arm implies a compressor, an accumulator, a proportional-valve bank, tubing runs, and real noise; an electroactive one implies a kilovolt amplifier. Budget, mass, and safety live there, not in the pretty molded part. Decide tethered-versus-untethered before the actuator geometry.
 - **Electroactive actuators run at kilovolts and that changes your whole safety story.** Most HASEL/DEA designs operate in the multi-kV range with modest strain and force per unit, and failures are dielectric breakdown events. Check the required force against measured blocking force before designing around "electric artificial muscle".
-- **SMA trades bandwidth for force and silence.** Heating is fast, cooling is not — wire actuators without active cooling cycle at a few hertz, and they drift with cycle count. If the task needs anything dynamic, you are buying an active cooling subsystem too.
+- **SMA trades bandwidth for force and silence.** Heating is fast, cooling is not, so wire actuators without active cooling are limited by cooling time, which grows with wire diameter. In still air a Flexinol wire takes about 0.18 s to cool at 0.001 in, 0.8 s at 0.003 in, and 5.4 s at 0.010 in (Dynalloy data sheet), so a 0.003 in wire cycles at about 1 Hz or below. A 35 Hz bending actuator has been reported using several thin wires plus resonant amplification (PMC4759690). The stroke also drifts with cycle count. If the task needs anything dynamic, you are buying an active cooling subsystem too.
 - **Sim-to-real for soft bodies fails on material parameters before it fails on contact.** Batch variation, cure time, and molding voids shift measured stiffness by large margins between nominally identical parts, so a simulator tuned on part A mispredicts part B. Identify material parameters per build, or add a residual-correction layer trained on a small set of real observations.
+- **Platinum-cure silicone can fail to cure against the master or mold it touches.** Addition-cure elastomers of the Ecoflex and Dragon Skin class are subject to cure inhibition, where a surface contaminant stops the rubber curing as expected. Under-cured UV-resin prints are a common cause, and sulfur-containing clay and condensation (tin) cure silicone are others. Fully UV post-cure resin masters (the manufacturer's guide says at least 6 hours, turning the print so every surface and deep cavity is lit), seal and release with the combination the manufacturer's compatibility table lists for your specific silicone, and cast a small test sample before committing the full pour.
+- **A hyperelastic model fitted to uniaxial pull data alone makes the simulated material stiffer than the real one.** Ogden and Mooney-Rivlin coefficients estimated from uniaxial elongation alone gave a stiffer estimate than the actual silicone in one biaxial-elongation study (PMC10221263, on one silicone rubber, not a soft-actuator study). Its recommended protocol is 10 cycles of equal-biaxial preconditioning, then equal-biaxial, constrained-biaxial, and uniaxial curves fitted together. A chamber wall is loaded biaxially, so treat a sim that runs stiff after a uniaxial-only fit as a material-fit suspect before blaming the controller, and re-identify per batch (see the sim-to-real bullet).
 - **A soft body is not automatically a safe body.** Compliance caps quasi-static contact force, but a pressurized chamber can burst, a tendon at full tension can cut, and high-voltage electrodes are still high-voltage electrodes. Run the same hazard analysis you would run for rigid hardware.

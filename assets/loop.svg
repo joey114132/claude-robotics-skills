@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" width="1200" height="300" role="img" aria-label="The choose-and-loop cycle: Frame, Fundamentals, Modern scan, Choose, Apply, then back to Frame">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" width="1200" height="300" role="img" aria-label="The answer cycle: Frame, Fundamentals, Modern scan, Verdict, You choose, then back to Frame">
   <defs>
     <linearGradient id="lg" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0%" stop-color="#D97757"/>
@@ -37,8 +37,8 @@
       <rect class="card" x="44" y="70" width="186" height="106" rx="14" stroke-width="1.5"/>
       <text class="num"  x="66" y="100" font-size="12.5" font-weight="700" letter-spacing="1.4">01</text>
       <text class="head" x="66" y="126" font-size="19" font-weight="700">Frame</text>
-      <text class="body" x="66" y="150" font-size="13">pin down exactly</text>
-      <text class="body" x="66" y="167" font-size="13">one decision</text>
+      <text class="body" x="66" y="150" font-size="13">split the request into</text>
+      <text class="body" x="66" y="167" font-size="13">ordered decisions</text>
     </g>
     <path class="flow" d="M236 123 L272 123" stroke-width="2" marker-end="url(#ar)" fill="none"/>
 
@@ -64,23 +64,23 @@
       <rect class="gate" x="746" y="70" width="186" height="106" rx="14" stroke-width="2"/>
       <rect x="746" y="70" width="5" height="106" rx="2.5" fill="url(#lg)"/>
       <text class="num"  x="770" y="100" font-size="12.5" font-weight="700" letter-spacing="1.4">04</text>
-      <text class="head" x="770" y="126" font-size="19" font-weight="700">You choose</text>
-      <text class="body" x="770" y="150" font-size="13">2–4 real options,</text>
-      <text class="body" x="770" y="167" font-size="13">classic always among</text>
+      <text class="head" x="770" y="126" font-size="19" font-weight="700">Verdict</text>
+      <text class="body" x="770" y="150" font-size="13">a recommendation first,</text>
+      <text class="body" x="770" y="167" font-size="13">the real alternative</text>
     </g>
     <path class="flow" d="M938 123 L974 123" stroke-width="2" marker-end="url(#ar)" fill="none"/>
 
     <g>
       <rect class="card" x="980" y="70" width="176" height="106" rx="14" stroke-width="1.5"/>
       <text class="num"  x="1002" y="100" font-size="12.5" font-weight="700" letter-spacing="1.4">05</text>
-      <text class="head" x="1002" y="126" font-size="19" font-weight="700">Apply</text>
-      <text class="body" x="1002" y="150" font-size="13">update the</text>
-      <text class="body" x="1002" y="167" font-size="13">decision stack</text>
+      <text class="head" x="1002" y="126" font-size="19" font-weight="700">You choose</text>
+      <text class="body" x="1002" y="150" font-size="13">pause only where</text>
+      <text class="body" x="1002" y="167" font-size="13">it is your call</text>
     </g>
 
     <path class="flow" d="M1068 182 L1068 232 Q1068 244 1056 244 L149 244 Q137 244 137 232 L137 182"
           stroke-width="2" stroke-dasharray="6 6" fill="none" marker-end="url(#ar)"/>
     <rect class="bg" x="514" y="230" width="176" height="28" rx="6"/>
-    <text class="rtxt" x="602" y="249" font-size="13.5" font-weight="600" text-anchor="middle">next decision →</text>
+    <text class="rtxt" x="602" y="249" font-size="13.5" font-weight="600" text-anchor="middle">next question →</text>
   </g>
 </svg>

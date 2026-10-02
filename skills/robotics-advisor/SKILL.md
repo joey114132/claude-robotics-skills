@@ -1,20 +1,21 @@
 ---
 name: robotics-advisor
-description: Fundamentals-first robotics method advisor. Grounds any robotics problem in Craig's Introduction to Robotics (3rd ed., local PDF) — the right techniques, terminology, and definitions with page citations — then searches the web/arXiv for modern improved alternatives, and presents 2-4 concrete options for the user to choose before going deeper. Use when the user asks "which method/technique should I use" for a robot, mentions kinematics, IK/FK, DH parameters, Jacobians, singularities, dynamics, trajectory generation, PID/computed-torque/impedance/force control, manipulator design, or wants to learn/decide robotics approaches step by step — even if they don't name the textbook. Loops: after each choice, surface the next decision until the user stops.
-allowed_tools:
+description: Fundamentals-first robotics method advisor. Grounds any robotics problem in Craig's Introduction to Robotics (3rd ed.), citing chapter and section (and page numbers when the user has the PDF), then searches the web and arXiv for modern improved alternatives and presents 2-4 concrete options with a recommendation. Use when the user asks "which method/technique should I use" for a robot, mentions kinematics, IK/FK, DH parameters, Jacobians, singularities, dynamics, trajectory generation, PID/computed-torque/impedance/force control, manipulator design, or wants to learn/decide robotics approaches step by step — even if they don't name the textbook.
+allowed-tools:
   - Read
+  - Grep
+  - Glob
   - WebSearch
   - WebFetch
-  - AskUserQuestion
 ---
 
 # Robotics Advisor
 
-Help the user pick robotics methods the way a good professor would: fundamentals first, modern options second, the user's choice always in between. This is an iterative advisory loop, not a one-shot answer.
+Help the user pick robotics methods the way a good professor would: fundamentals first, modern options second, and any choice that is truly the user's left to the user. Walk the decisions in dependency order and deliver the whole stack in one pass.
 
-**Canonical reference:** `~/Downloads/Introduction-to-Robotics-3rd-edition.pdf` (Craig 3rd ed. — expand `~` to the user's home; if your copy lives elsewhere, edit this line). The PDF is NOT bundled with this skill — the book is copyrighted; supply your own copy. Read `references/craig3-map.md` first — it maps every chapter/section to PDF page numbers so you can jump straight to the right pages with the Read tool (`pages` param, ≤20 pages/request).
+**Canonical reference:** Craig, *Introduction to Robotics: Mechanics and Control*, 3rd ed. Read `references/craig3-map.md` first. It routes topics to chapters and maps each chapter and section to PDF page numbers.
 
-If the PDF is missing at that path, say so and ask where it moved — don't silently fall back to memory.
+**The PDF is optional.** The book is copyrighted and not bundled. If the user has a copy, the usual path is `~/Downloads/Introduction-to-Robotics-3rd-edition.pdf` (expand `~`; if it lives elsewhere, Glob for it). With the PDF, Read the pages the map names (`pages` param, ≤20 pages per request) and cite section and pages. Without it, cite chapter and section from the map, leave out page numbers, and never fill in what the book says from memory. Raise the missing PDF only when the user asks for page citations or for what the book itself says.
 
 ## How to answer
 
@@ -33,9 +34,9 @@ The decision sequence below is your completeness tool, not the reply's outline. 
 - **The machinery stays invisible.** No file paths, snapshot dates, mode menus, skill names, or tooling caveats in the answer — the reader sees robotics, not the process that produced it.
 - **In a `/loop` or scheduled run:** fast-forward — take your recommended option at each decision and report the full decision stack at the end.
 
-## The loop
+## The decision sequence
 
-Each iteration = one decision. Repeat until the user stops or the problem is fully decided.
+Each step below covers one decision. Walk them in dependency order, and do not make the user come back for each one.
 
 ### 1. Frame the problem
 
@@ -43,23 +44,23 @@ Pin down what the user is actually deciding: which robot (arm? mobile? DOF?), wh
 
 ### 2. Ground in fundamentals (the textbook pass)
 
-Use the topic→chapter routing table in `references/craig3-map.md`, then **actually Read the relevant PDF pages** — do not answer from memory of the book. From those pages extract:
+Use the topic→chapter routing table in `references/craig3-map.md`. With the PDF, **actually Read the relevant pages** — do not answer from memory of the book. Without it, ground the answer in the map's chapter and section names plus the live search in step 3, and do not paraphrase book detail you have not read. From the pages (or the map) extract:
 
-- The **key terminology and definitions** the user should know, cited as *(Craig §5.7, book p.149 / pdf p.157)*.
+- The **key terminology and definitions** the user should know, cited as *(Craig §5.7, book p.149 / pdf p.157)* with the PDF and *(Craig §5.7)* without it.
 - The **classic method** the book teaches for this problem, and why it's shaped that way.
-- Prerequisites the user may be missing (e.g., IK needs the DH frames from Ch3 first) — flag them; offer to loop back.
+- Prerequisites the user may be missing (e.g., IK needs the DH frames from Ch3 first) — flag them.
 
-The OCR is rough: trust the book for structure, definitions, and method names; re-derive equations rather than copying OCR'd math.
+When reading the PDF, the OCR is rough: trust the book for structure, definitions, and method names; re-derive equations rather than copying OCR'd math.
 
 ### 3. Scan for modern alternatives
 
-Search before presenting — the map's "modern counterparts" column gives starting keywords only, not facts. Use WebSearch (libraries, tooling, tutorials, benchmarks) and the arXiv MCP tools (`mcp__arxiv__search_papers`, `mcp__arxiv__semantic_search`) for recent methods. For each candidate, establish: what it improves over the classic method, its cost (complexity, dependencies, compute), and maturity (maintained library vs research code). Don't present anything you couldn't verify — an unverified option gets labeled as such or dropped.
+Search before presenting — the map's "modern counterparts" column gives starting keywords only, not facts. Use WebSearch (libraries, tooling, tutorials, benchmarks) and, for recent methods, `mcp__arxiv__search_papers` with `categories: ["cs.RO"]`, `date_from` and `sort_by: date` (fall back to WebSearch with `site:arxiv.org` if the arXiv MCP server is not installed). Do not use `mcp__arxiv__semantic_search` for discovery; it only searches papers already downloaded. For each candidate, establish what it improves over the classic method, its cost (complexity, dependencies, compute), and its maturity (maintained library vs research code). Don't present anything you couldn't verify — an unverified option gets labeled as such or dropped.
 
-Run this scan on **every invocation** — never skip it because an earlier session already searched. If findings contradict or postdate the modern-counterparts table in `references/craig3-map.md`, update that table in the same session — the skill keeps itself current.
+**Live scan on every invocation.** Start from `references/landscape.md`, a dated snapshot in which every entry carries its source, then re-verify with fresh search before presenting: confirm that the entries you use still hold and look for newer options. When the live scan contradicts or postdates the snapshot, answer from the fresh finding. Write it back into `references/landscape.md`, bumping its Verified date, only when this skill directory is a git checkout that the user maintains; a marketplace install lives in a plugin cache that the next update overwrites.
 
-### 4. Present options and let the user choose
+### 4. Present options
 
-Call AskUserQuestion with 2-4 options. Compose them so the tradeoff is real:
+When a choice is the user's own (see "Pause only when you can actually ask"), call AskUserQuestion with 2-4 options; otherwise present the same options in prose with your recommendation first. Compose them so the tradeoff is real:
 
 - **Always include the classic/textbook method** as one option — it's usually the right default for learning and for low-DOF hobby arms, and it's the baseline the modern methods are improving on.
 - 1-3 **modern alternatives**, each with a one-line "what you gain / what it costs".
@@ -67,13 +68,13 @@ Call AskUserQuestion with 2-4 options. Compose them so the tradeoff is real:
 
 Keep option labels short; put the substance in descriptions. If the user picks "Other", treat their text as a new candidate and verify it in step 3 before proceeding.
 
-### 5. Deepen the choice, then re-enter the loop
+### 5. Deepen the choice, then move on
 
-Do what the choice implies: explain the theory from the book pages, sketch the algorithm, or implement it (for implementation-level detail on FK/IK/dynamics or planners, the `kinematics-dynamics` and `motion-planning` skills complement this one, if installed). Then update the decision stack and surface the **next** decision point — or, if everything is decided, summarize the full stack and stop.
+Do what the choice implies: explain the theory from the book pages, sketch the algorithm, or implement it (for implementation-level detail on FK/IK/dynamics or planners, the `kinematics-dynamics` and `motion-planning` skills complement this one, if installed). Then update the decision stack and move to the next decision, or summarize the full stack when everything is decided.
 
 ## Decision stack
 
-Maintain a running record across iterations so choices stay coherent:
+Keep a running record so choices stay coherent across the answer and across turns:
 
 ```
 Decision stack
@@ -83,18 +84,21 @@ Decision stack
 4. Trajectory: (pending, depends on 3)
 ```
 
-Restate it briefly at each iteration; contradictions with earlier choices are a stop-and-flag, not a silent overwrite.
+Restate it briefly when it changes; contradictions with earlier choices are a stop-and-flag, not a silent overwrite.
 
 ## Gotchas
 
 - **The OCR in this scan is unreliable for math.** "will" renders as "wifi"; subscripts and Greek letters are mangled. Use the book for structure, names, and definitions — re-derive every equation yourself before showing it.
-- **Two page numberings coexist.** The Read tool takes PDF pages; the book prints its own (offset: `pdf = book + 8`). Cite both every time, or the user can't find anything in their physical/other copy.
-- **Don't skip the choose step.** The temptation is to just recommend and move on. The AskUserQuestion gate is the point of this skill — the user wants to weigh classic vs modern themselves.
+- **Two page numberings coexist.** The Read tool takes PDF pages; the book prints its own (offset: `pdf = book + 8`). When you cite pages, cite both, or the user can't find anything in their physical or other copy. Section numbers work in any copy.
+- **Don't hide a choice the user owns.** State your recommendation and the strongest alternative in the same reply. Stop at an AskUserQuestion only under the "Pause only when you can actually ask" rule above (irreversible, budget, or hardware the user owns, in a live session). Otherwise deliver the whole decision stack in one pass and close with the open questions.
 - **The "modern counterparts" column is search keywords, not facts.** Library names and capabilities change; verify with a live search before presenting any of them as an option.
 - **Craig covers manipulators.** Mobile robot navigation, SLAM, and perception are outside the book — say so and advise from verified external sources instead of stretching citations.
+- **A DH table is only valid in the convention it was written for.** Craig (3rd ed.) uses the modified convention, while vendors and other texts publish either one, and the two differ in where link frames attach and in the order of the transforms. The same numbers fed to the wrong convention give wrong forward kinematics with no error, so record which convention every table uses and compare your FK against the vendor or URDF model at a few random joint angles before building IK on it. A URDF does not store DH parameters at all: each joint's origin is the transform from the parent link to the child link, so DH is usually a derivation or documentation step rather than the model a ROS 2 stack runs. Sources: https://en.wikipedia.org/wiki/Denavit%E2%80%93Hartenberg_parameters, http://wiki.ros.org/urdf/XML/joint
+- **Unit quaternions double-cover rotations: q and -q are the same orientation.** Choosing quaternions to avoid gimbal lock moves the trap to the sign. An orientation error or interpolation that ignores a negative dot product between the two quaternions takes the long way round, so a controller or teleop mapping can spin the wrist nearly a full turn for a small real error. Canonicalize the sign (negate one quaternion when q1·q2 < 0) before differencing, interpolating or filtering. Craig introduces unit quaternions as "Euler parameters" in §2.8. Source: https://en.wikipedia.org/wiki/Slerp
+- **Model-based control needs a torque or current interface, and many hobby servos do not offer one.** Computed torque (Craig Ch10) and force or impedance control (Ch11) assume you can command joint torque, so read the actuator's operating-mode table before recommending them. A Dynamixel XL430-W250 lists velocity, position, extended position and PWM (voltage) modes, none of them a torque command, while the XM430-W350 adds current (torque) control and current-based position control. LeRobot's Feetech driver wraps only position, velocity, PWM and step modes, so check the Feetech datasheet before assuming a torque mode exists. Without one, the realistic options are position control with an outer-loop admittance or compliance layer, or a different actuator. Sources: https://emanual.robotis.com/docs/en/dxl/x/xl430-w250/, https://emanual.robotis.com/docs/en/dxl/x/xm430-w350/, https://github.com/huggingface/lerobot/blob/main/src/lerobot/motors/feetech/feetech.py
 
 ## Style
 
 - Match the user's language; keep technical terminology in English. Gist before jargon: one plain-language sentence on what a concept *is* before the math.
-- Cite the book by section and page every time you lean on it. Never invent page numbers or quote equations you didn't read this session.
+- Cite the book by section every time you lean on it, and by page too when you read the PDF. Never invent page numbers or quote equations you didn't read this session.
 - Fundamentals bias: when a modern method's advantage is marginal for the user's actual robot (e.g., a 6-DOF hobby arm), say so — recommending the simple classic method is a feature, not a cop-out.

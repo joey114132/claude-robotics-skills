@@ -1,16 +1,12 @@
 ---
 name: robot-swarm
-description: Swarm and distributed robotics advisor — decentralized control, local-interaction rules, and collective behavior decisions in the same fundamentals-first, choose-and-loop style as robotics-advisor. Use when the user coordinates many simple robots rather than a few capable ones — flocking/boids, formation control, consensus algorithms, emergent or self-organizing behavior, decentralized collision avoidance and trajectory planning, distributed task allocation without a central dispatcher, drone swarms and light shows, Crazyflie/Kilobot/e-puck-class platforms, ARGoS or swarm-scale simulation, communication-range and topology constraints, scaling to tens or hundreds of robots, or robustness when individual units fail. Presents 2-4 verified options per decision and loops to the next decision after each choice.
-allowed_tools:
+description: Swarm and distributed robotics advisor — decentralized control, local-interaction rules, and collective behavior decisions. Use when the user coordinates many simple robots rather than a few capable ones — flocking/boids, formation control, consensus algorithms, emergent or self-organizing behavior, decentralized collision avoidance and trajectory planning, distributed task allocation without a central dispatcher, drone swarms and light shows, Crazyflie/Kilobot/e-puck-class platforms, ARGoS or swarm-scale simulation, communication-range and topology constraints, scaling to tens or hundreds of robots, or robustness when individual units fail.
+allowed-tools:
   - Read
-  - Write
-  - Edit
-  - Bash
   - Grep
   - Glob
   - WebSearch
   - WebFetch
-  - AskUserQuestion
 ---
 
 # Robot Swarm
@@ -59,7 +55,7 @@ The simplest workable option stays on the table at every step.
 
 Swarm tooling is a mix of long-lived academic frameworks and fast-moving aerial-swarm code, and several well-known packages are quietly unmaintained. Search (WebSearch/arXiv) before presenting options, and treat remembered project names, platform specs, and maintenance status as keywords to verify rather than facts.
 
-**Live scan on every invocation.** Start from `references/landscape.md` — a dated, source-verified snapshot — then re-verify with fresh search before presenting: confirm the entries you use still hold and check for newer options. If the live scan contradicts or postdates the snapshot, update `references/landscape.md` (and its Verified date) in the same session — this skill keeps itself current.
+**Live scan on every invocation.** Start from `references/landscape.md`, a dated snapshot in which every entry carries its source, then re-verify with fresh search before presenting: confirm that the entries you use still hold and look for newer options. When the live scan contradicts or postdates the snapshot, answer from the fresh finding. Write it back into `references/landscape.md`, bumping its Verified date, only when this skill directory is a git checkout that the user maintains; a marketplace install lives in a plugin cache that the next update overwrites.
 
 ## Gotchas
 
@@ -70,3 +66,5 @@ Swarm tooling is a mix of long-lived academic frameworks and fast-moving aerial-
 - **Consensus converges at the speed of the worst-connected robot.** Convergence time follows the connectivity of the comms graph, so cutting radio range or power to save battery can split the graph — and the halves converge to different answers while every robot still reports "converged". Monitor graph connectivity as a first-class runtime signal, not just packet loss.
 - **Adding robots can reduce total work done.** Physical interference — avoidance maneuvers, congestion at nests, docks, and doorways — makes per-robot throughput fall as N rises, and there is an optimum beyond which more robots is a net loss. Measure throughput vs N in simulation before promising that the system scales.
 - **Reflashing fifty robots by hand destroys the iteration loop.** Software distribution, per-robot version reporting, and battery/charging logistics are what actually limit experiment throughput on a physical swarm. Design over-the-air update and a swarm-wide stop before the robot count passes about ten.
+- **A shared Zenoh router is a dependency every robot shares.** Moving ROS 2 to `rmw_zenoh_cpp` swaps multicast discovery for a router, so a swarm that adopts it for discovery inherits one more shared component. Give each robot its own router where the topology allows it, and test discovery with one router killed, because the rmw_zenoh README does not say what happens to already-connected nodes when a router dies. Discovery and bridging mechanics live in `robot-fleet`. Source: https://github.com/ros2/rmw_zenoh
+- **One radio is not N radios.** Bitcraze reports that dozens of Crazyflies can now share a single radio and still stream position telemetry (new Rust library plus Crazyradio 2.0), but "so many Crazyflie on one radio does limit the maximum bandwidth per Crazyflie". Budget per-drone telemetry against the number of radios, prefer a stack that uses broadcast where it can (Crazyswarm2 does so "whenever possible to require fewer radios per Crazyflie"), and measure the actual per-drone link rate on hardware at your target N. Sources: https://www.bitcraze.io/2026/03/towards-bigger-crazyflie-swarms/ and https://imrclab.github.io/crazyswarm2/faq.html

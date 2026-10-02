@@ -1,0 +1,11 @@
+---
+type: llm
+---
+The mechanism behind the trap: a Performance Level (ISO 13849-1) is a computed reliability and architecture property of the whole safety function across sensor, logic and actuator. It comes from the architecture category, component MTTFd, diagnostic coverage, common-cause-failure measures and safety-related software development evidence. It is not earned by a function existing, reacting quickly, or having real-time scheduling. PL d needs an architecture that tolerates a single fault and detects faults (for example Category 3 with redundant, cross-monitored channels), or a justified Category 2 with testing. A single ROS 2 process on one general-purpose-OS CPU has no redundant channel, no diagnostics that cover its own failure, no quantified dangerous-failure rate, and no safety-grade software process or systematic-capability evidence. Realtime priority, watchdogs and QoS reduce latency and jitter but do not provide any of that.
+
+PASS only if the reply explains this well enough for a practitioner to act on it. It must cover both parts.
+(a) PL is derived from architecture plus quantified reliability and diagnostics across the whole chain, with software integrity evidence, not from the function merely working or being fast.
+(b) Why this particular design fails that: single channel or no independent diagnostics, general-purpose OS and hardware with no evidenced failure rate or safety development process, and the point that realtime tuning or a watchdog running on the same CPU does not address those failures.
+Any correct architecture category is acceptable (Category 3 or 4, or Category 2 with justification). Standards named by number must be attributed correctly (ISO 13849-1 defines PL and the architecture categories, ISO 13850 is the emergency stop function, IEC 60204-1 covers the electrical realisation, IEC 61508 is the SIL-based functional safety basic standard). Naming no standard number at all is not a failure.
+
+FAIL if the reply only asserts "Linux is not certified" or "software is not safe enough" without the mechanism. FAIL if it misattributes standards (for example says ISO 13849-1 defines SIL levels, or treats PL as a score of code quality alone). FAIL if the reasoning implies that more testing of the same node would close the gap.

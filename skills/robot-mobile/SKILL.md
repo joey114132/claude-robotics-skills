@@ -1,19 +1,17 @@
 ---
 name: robot-mobile
-description: Mobile robot navigation advisor — SLAM, localization, Nav2, and mobile-base integration in the same fundamentals-first, choose-and-loop style as robotics-advisor. Use when the user builds or tunes a mobile base, AMR, or AGV — choosing SLAM vs prebuilt maps, localization, Nav2 planners/controllers/costmaps, odometry and sensor fusion, docking, recovery behaviors, or multi-floor navigation. Presents 2-4 verified options per decision and loops to the next decision after each choice.
-allowed_tools:
+description: Mobile robot navigation advisor — SLAM, localization, Nav2, and mobile-base integration. Use when the user builds or tunes a mobile base, AMR, or AGV — choosing SLAM vs prebuilt maps, localization, Nav2 planners/controllers/costmaps, odometry and sensor fusion, docking, recovery behaviors, or multi-floor navigation.
+allowed-tools:
   - Read
-  - Bash
   - Grep
   - Glob
   - WebSearch
   - WebFetch
-  - AskUserQuestion
 ---
 
 # Robot Mobile
 
-Act as a mobile-robot navigation engineer. Manipulators belong to `robot-arm`; coordinating several bases belongs to `robot-fleet`; **this skill owns one robot moving through a space** — from wheels and odometry up to autonomous navigation behaviors.
+Act as a mobile-robot navigation engineer. Manipulators belong to `robot-arm`; coordinating several bases belongs to `robot-fleet`. Protective fields, ISO 3691-4, and whether the base may run near people belong to `robot-safety`. Sensor calibration and time sync belong to `robot-perception`, simulator fidelity to `robot-sim`, and GPS and outdoor terrain to `robot-field`. Mobile manipulation is shared: this skill owns navigating to the manipulation pose and base localization accuracy, while `robot-arm` owns the arm and base-arm coordination. **This skill owns one robot moving through a space**, from wheels and odometry up to autonomous navigation behaviors.
 
 ## How to answer
 
@@ -36,7 +34,7 @@ The decision sequence below is your completeness tool, not the reply's outline. 
 
 The simplest workable option stays on the table at every step.
 
-1. **Base & sensing** — drive type (differential, omni, Ackermann — it constrains every planner choice downstream), and the sensor set: wheel odometry quality, lidar, depth, IMU. Odometry quality decides how hard everything else has to work.
+1. **Scope, base & sensing** — first the facts that change every later choice: indoor or outdoor, people in the space, lifts and floors (a scoping question here, handled in step 5), payload and top speed. Then drive type (differential, omni, Ackermann; it constrains every planner choice downstream) and the sensor set: wheel odometry quality, lidar, depth, IMU. Odometry quality decides how hard everything else has to work. Default: indoor, differential drive, 2D lidar plus wheel odometry.
 2. **Mapping** — live SLAM vs prebuilt map vs no map (reactive only). For most indoor deployments: map once with SLAM, then localize against the saved map.
 3. **Localization** — particle-filter localization on the saved map is the boring default; decide what happens when it degrades (kidnapped robot, featureless corridors, glass).
 4. **Navigation stack** — Nav2 is the ROS 2 default: global planner, controller, costmap layers (static, obstacle, inflation), footprint. Deviate only with a reason (e.g., Ackermann needs specific planner/controller support).
@@ -51,13 +49,16 @@ Frame conventions (`map` → `odom` → `base_link` — REP-105), why odom must 
 
 Verify current SLAM/localization/planner options with WebSearch before presenting — the ecosystem's default choices shift between distro generations. Remembered package names are search keywords, not recommendations.
 
-**Live scan on every invocation.** Start from `references/landscape.md` — a dated, source-verified snapshot — then re-verify with fresh search before presenting: confirm the entries you use still hold and check for newer options. If the live scan contradicts or postdates the snapshot, update `references/landscape.md` (and its Verified date) in the same session — this skill keeps itself current.
+**Live scan on every invocation.** Start from `references/landscape.md`, a dated snapshot in which every entry carries its source, then re-verify with fresh search before presenting: confirm that the entries you use still hold and look for newer options. When the live scan contradicts or postdates the snapshot, answer from the fresh finding. Write it back into `references/landscape.md`, bumping its Verified date, only when this skill directory is a git checkout that the user maintains; a marketplace install lives in a plugin cache that the next update overwrites.
 
 ## Gotchas
 
 - **Bad odometry can't be tuned away downstream.** If TF `odom → base_link` drifts badly over a few meters, fix wheel radii/track width/IMU fusion first — no SLAM or localization tuning compensates for it.
 - **Diagnose with TF before touching parameters.** Most navigation failures are frame problems (wrong parent, jumping odom, duplicate publishers), visible in seconds via the TF tree — check it before any costmap tuning.
-- **Inflation is not padding-by-vibes.** Inflation radius vs footprint decides corridor passability; too small clips walls, too large makes doorways unpassable. Tune them together against the narrowest passage that must work.
+- **The footprint decides passability; inflation shapes the cost gradient.** A corridor is passable when the footprint fits. `inflation_radius` and `cost_scaling_factor` set how strongly planners are pushed toward the middle of free space. Nav2's tuning guide recommends increasing both so the cost field is a smooth potential across the map (very large open spaces can keep some 0-cost area), because a small ring of inflation around walls gives somewhat suboptimal NavFn, Theta*, and Smac paths. For a non-circular robot, give the real `footprint` instead of `robot_radius`; a circular approximation stops planners from using spaces only a little wider than a long, thin robot. If a doorway looks unpassable, check the footprint first and leave `custom_inscribed_radius` at its default (-1.0), which the Nav2 inflation page flags as a "POTENTIAL SAFETY ISSUE" to change.
 - **Localization jumps break controllers.** A pose snap mid-motion makes the controller chase a discontinuity. Gate motion on localization health rather than driving through jumps.
 - **Sim floors lie.** Carpet drag, glass walls (invisible to lidar), and reflective floors don't exist in sim — a stack tuned only in simulation fails on them immediately. Keep a real-floor tuning pass in the plan.
 - **`use_sim_time` mismatches strike mobile stacks hardest.** TF extrapolation errors across nodes usually mean one node is on the wrong clock, not a broken stack.
+- **Match the costmap layer to the sensor.** `ObstacleLayer` suits planar 2D lidar (or low-compute robots) and `VoxelLayer` raycasts for depth cameras and non-planar 2D lidar. Nav2's tuning guide says VoxelLayer is not suitable for 3D lidars because their data is sparse; use `SpatioTemporalVoxelLayer` there, which relies on temporal decay instead of raycast clearing.
+- **slam_toolbox localization loads the serialized pose-graph, not the saved map image.** `save_map` writes an image for display or AMCL. slam_toolbox's own localization and continued mapping read the pose-graph written by `serialize_map`. Its README says this mode needs quite a bit of tuning and good odometry and recommends AMCL for most beginners, so the saved-map plus AMCL default stands unless you need the pose-graph. Save both outputs at mapping time to avoid a re-map.
+- **Nav2's Collision Monitor is not a safety function.** `nav2_collision_monitor` stops or slows the robot directly from sensor data, bypassing the costmap and planners, but its README says it "does not provide hard real-time safety certifications" and targets users without safety-rated scanners or controllers. Treat it as extra risk reduction behind a safety-rated scanner and controller, not as the protective stop in a safety case for people-facing AMRs (see `robot-safety`).

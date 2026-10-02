@@ -23,7 +23,7 @@
 <rect class="surface" width="900" height="554" rx="16"/>
 <g font-family="ui-sans-serif,-apple-system,Segoe UI,Inter,Helvetica,Arial,sans-serif">
 <text class="h1" x="40" y="46" font-size="19" font-weight="700">Does the skill actually make the answer more expert?</text>
-<text class="h2" x="40" y="70" font-size="13">14 robotics questions, each with one planted trap a novice misses. Both answers scored blind by an independent judge, 0–2 per case.</text>
+<text class="h2" x="40" y="70" font-size="13">14 questions: 8 diagnostic with a planted trap, 6 design scored on decision order. Blind judge, 0–2 per case.</text>
 <circle class="s1" cx="46" cy="92" r="5.5"/>
 <text class="lab" x="58" y="97" font-size="13" font-weight="600">With skill</text>
 <text class="val" x="132" y="97" font-size="13">93% overall</text>

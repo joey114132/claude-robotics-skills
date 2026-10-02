@@ -1,0 +1,8 @@
+---
+type: llm
+---
+The user feeds a vendor datasheet DH table into forward kinematics built from Craig's textbook formula Rot_x(alpha_{i-1}) Trans_x(a_{i-1}) Rot_z(theta_i) Trans_z(d_i). The planted trap is a DH convention mismatch: Craig uses the modified (proximal) convention, while many vendor datasheets list standard (classic, distal) parameters (some vendors do publish modified tables, so an answer may reasonably say to confirm which convention the datasheet uses). Using one table with the other convention's transform gives a wrong pose.
+
+PASS only if the reply identifies this convention mismatch (standard/classic/distal versus modified/proximal, or an equivalent description such as "a and alpha belong to the other link and the transform order differs") as the likely root cause of the wrong pose, AND its recommendation changes because of it, for example implementing the transform that matches the datasheet's convention or converting the parameter table to the other convention, instead of continuing to hunt for a numeric bug.
+
+FAIL if the reply answers the question as framed, for example by only suggesting further checks of units, joint offsets, angle sign, radians versus degrees, base or tool frames, or floating-point issues, without naming the convention mismatch. FAIL if it mentions DH conventions only as one item in a long list of possible causes without committing to it as the leading diagnosis. FAIL if it names the mismatch but then still tells the user to keep feeding the datasheet rows unchanged into the current transform and tune offsets or numbers. Converting the table into the transform's convention, or switching the transform to the datasheet's convention, is NOT a failure.

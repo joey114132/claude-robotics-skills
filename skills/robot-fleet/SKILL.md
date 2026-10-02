@@ -1,14 +1,12 @@
 ---
 name: robot-fleet
-description: Multi-robot fleet advisor — Open-RMF, fleet management, and multi-robot coordination in the same fundamentals-first, choose-and-loop style as robotics-advisor. Use when the user coordinates more than one robot — Open-RMF/RMF setup, fleet managers, traffic management and deconfliction, shared resources (doors, lifts, chargers, corridors), task dispatch/allocation across robots, multi-robot DDS discovery and namespacing, or mixing robot vendors in one facility. Presents 2-4 verified options per decision and loops to the next decision after each choice.
-allowed_tools:
+description: Multi-robot fleet advisor — Open-RMF, fleet management, and multi-robot coordination. Use when the user coordinates more than one robot — Open-RMF/RMF setup, fleet managers, traffic management and deconfliction, shared resources (doors, lifts, chargers, corridors), task dispatch/allocation across robots, multi-robot DDS discovery and namespacing, or mixing robot vendors in one facility.
+allowed-tools:
   - Read
-  - Bash
   - Grep
   - Glob
   - WebSearch
   - WebFetch
-  - AskUserQuestion
 ---
 
 # Robot Fleet
@@ -37,7 +35,7 @@ The decision sequence below is your completeness tool, not the reply's outline. 
 The simplest workable option stays on the table at every step.
 
 1. **Fleet topology** — how many robots, one vendor or mixed, one building or many, and who is the source of truth (central dispatcher vs distributed negotiation). Most facility deployments want central task dispatch with per-robot autonomy for motion.
-2. **Interoperability layer** — Open-RMF (the open standard for heterogeneous fleets: fleet adapters per vendor, shared traffic schedule), a vendor's proprietary FMS, or a custom coordinator. Hand-rolling multi-robot negotiation is almost always the wrong option — say so.
+2. **Interoperability layer** — Open-RMF (the open standard for heterogeneous fleets: fleet adapters per vendor, shared traffic schedule), a vendor's proprietary FMS, or a custom coordinator. Hand-rolling multi-robot negotiation is almost always the wrong option — say so. Treat the robot-to-fleet interface as a separate layer: VDA 5050 is an open standard for communication between mobile robot fleets and a central fleet control, so ask which interface each vendor's robots implement (VDA 5050, a proprietary API, or neither) before choosing the coordinator. Community adapters and migration guides link VDA 5050 to Open-RMF, but verify their current maturity first.
 3. **Traffic & shared resources** — corridors, intersections, doors, lifts, charging docks. Decide the negotiation model (schedule-based deconfliction vs reactive avoidance) and which resources need explicit arbitration.
 4. **Task allocation & dispatch** — how work reaches robots: bid/auction, capability-based assignment, or simple queues. Heterogeneous fleets need capability descriptions, not just robot IDs.
 5. **Comms & discovery at scale** — namespaces and frame prefixes per robot, DDS discovery strategy (peer-to-peer discovery degrades as N grows — consider a discovery server or zenoh-class middleware; verify current options), network segmentation, and what happens on Wi-Fi dropout.
@@ -49,13 +47,15 @@ The simplest workable option stays on the table at every step.
 
 Before presenting options, verify the current state (WebSearch): Open-RMF component names and maturity, supported fleet adapters, middleware tiers for scale. Multi-robot tooling changes fast — treat remembered project names as search keywords, not facts.
 
-**Live scan on every invocation.** Start from `references/landscape.md` — a dated, source-verified snapshot — then re-verify with fresh search before presenting: confirm the entries you use still hold and check for newer options. If the live scan contradicts or postdates the snapshot, update `references/landscape.md` (and its Verified date) in the same session — this skill keeps itself current.
+**Live scan on every invocation.** Start from `references/landscape.md`, a dated snapshot in which every entry carries its source, then re-verify with fresh search before presenting: confirm that the entries you use still hold and look for newer options. When the live scan contradicts or postdates the snapshot, answer from the fresh finding. Write it back into `references/landscape.md`, bumping its Verified date, only when this skill directory is a git checkout that the user maintains; a marketplace install lives in a plugin cache that the next update overwrites.
 
 ## Gotchas
 
-- **DDS discovery melts down before your code does.** Default peer-to-peer discovery traffic grows roughly with N² participants; fleets that work at 3 robots break at 15. Plan discovery architecture early, not after symptoms.
+- **DDS discovery melts down before your code does.** Default peer-to-peer discovery traffic grows roughly with N² participants, and on Wi-Fi it can also feed on itself: delayed or lost discovery messages expire reliability timers, and the retransmissions add channel contention and delay further discovery until it escalates into a discovery storm. Plan discovery architecture early (a discovery server or a Zenoh router avoids multicast discovery) and test with the whole fleet booting at once on the real Wi-Fi, not after symptoms.
 - **Frames collide silently.** Every robot publishing `map`/`odom`/`base_link` without prefixes makes TF and RViz garbage. Enforce per-robot frame prefixes and namespaces from day one.
 - **Clocks must agree.** Schedule-based traffic deconfliction assumes synchronized time — un-synced clocks produce phantom conflicts and near-misses. NTP/chrony across the fleet is infrastructure, not an afterthought.
 - **A fleet adapter is a contract, not a wrapper.** Open-RMF integration lives or dies on how honestly the adapter reports robot state (position, battery, task progress). Optimistic state reporting causes fleet-level deadlocks.
 - **Reactive avoidance doesn't replace negotiation.** Two robots that can each avoid obstacles will still deadlock in a narrow corridor without a schedule or priority rule. Decide corridor arbitration explicitly.
 - **One robot's map update is the fleet's problem.** Robots localizing on different map versions disagree about free space. Version maps and roll them out atomically.
+- **An adapter that stops the robot on its own can stall the fleet.** If your vendor stack or safety layer halts the robot mid-path, RMF still treats the last command as running and, per a maintainer on Open Robotics Discourse (2023), retries only after about ten seconds as a last resort. Never call `path_finished_callback` for a path that did not finish, because that corrupts task management. The maintainer's cleaner option is `update_handle.interrupt(...)`, keeping the returned handle, then `unstable_declare_holding(...)` (an unstable API, so check the current signature); deleting the handle makes the adapter replan. Calling `update_handle.replan()` once your own layer wants a new plan also works.
+- **Switching to rmw_zenoh is not a drop-in discovery fix.** Multicast discovery is off by default, so nodes only find each other through a Zenoh router, and by default discovery and traffic stay within one host (a machine running a router plus its nodes). Bridging robots needs router-to-router `connect` config, and a Humble robot paired with Iron-or-newer peers is discoverable but silently drops messages. Test cross-host and cross-distro pub/sub before the migration, not just `ros2 node list`.

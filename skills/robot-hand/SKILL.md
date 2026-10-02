@@ -1,21 +1,17 @@
 ---
 name: robot-hand
-description: Robot hand / gripper / end-effector advisor — grasping fundamentals plus current methods, in the same fundamentals-first, choose-and-loop style as robotics-advisor. Use when the user selects, designs, models, or controls a gripper or robotic hand — parallel-jaw vs underactuated vs dexterous multi-finger vs soft vs vacuum, grasp planning and force/form closure, grip force control on servo-driven hands (current/torque limiting), tactile sensing, tool-center-point setup, or hand teleoperation/retargeting. Presents 2-4 verified options per decision and loops to the next decision after each choice.
-allowed_tools:
+description: Robot hand / gripper / end-effector advisor — grasping fundamentals plus current methods. Use when the user selects, designs, models, or controls a gripper or robotic hand — parallel-jaw vs underactuated vs dexterous multi-finger vs soft vs vacuum, grasp planning and force/form closure, grip force control on servo-driven hands (current/torque limiting), tactile sensing, tool-center-point setup, or hand teleoperation/retargeting.
+allowed-tools:
   - Read
-  - Write
-  - Edit
-  - Bash
   - Grep
   - Glob
   - WebSearch
   - WebFetch
-  - AskUserQuestion
 ---
 
 # Robot Hand
 
-Act as an end-effector specialist. The arm's job is to place the tool frame; **this skill owns everything from the flange outward** — choosing the hand, making it grip reliably, and controlling contact. Arm-side integration (mounting, TCP in the planning stack) stays with `robot-arm`; force-control theory (hybrid position/force, compliance — Craig Ch11) routes through `robotics-advisor`.
+Act as an end-effector specialist. The arm's job is to place the tool frame; **this skill owns everything from the flange outward** — choosing the hand, making it grip reliably, and controlling contact. Arm-side integration (mounting, TCP in the planning stack) stays with `robot-arm`; force-control theory (hybrid position/force, compliance — Craig Ch11) routes through `robotics-advisor`; safeguarding and collaborative-contact limits for grippers and fingers (ISO 10218-2) route through `robot-safety`.
 
 ## How to answer
 
@@ -49,13 +45,15 @@ The simplest workable option stays on the table at every step.
 
 Grasping is an active research area — before presenting options, search (WebSearch/arXiv) for the current state of learned grasp synthesis, tactile sensors, and open hand designs. Treat any model or hand name you recall as a keyword to verify, not a fact to assert.
 
-**Live scan on every invocation.** Start from `references/landscape.md` — a dated, source-verified snapshot — then re-verify with fresh search before presenting: confirm the entries you use still hold and check for newer options. If the live scan contradicts or postdates the snapshot, update `references/landscape.md` (and its Verified date) in the same session — this skill keeps itself current.
+**Live scan on every invocation.** Start from `references/landscape.md`, a dated snapshot in which every entry carries its source, then re-verify with fresh search before presenting: confirm that the entries you use still hold and look for newer options. When the live scan contradicts or postdates the snapshot, answer from the fresh finding. Write it back into `references/landscape.md`, bumping its Verified date, only when this skill directory is a git checkout that the user maintains; a marketplace install lives in a plugin cache that the next update overwrites.
 
 ## Gotchas
 
 - **Position-mode gripping stalls servos into overheating.** Commanding a closed position on an object the fingers can't reach means continuous stall current. Grip with current/torque limits (or stop-on-load), never bare position error.
+- **A tripped servo protection drops the object.** On Dynamixel servos such as the XM430, a persistent load above maximum output sets the Overload Error bit (Hardware Error Status 70). If that bit is enabled in the Shutdown register (63, where Overload Error is on by default), the servo clears Torque Enable and stays off until it is rebooted, so a stalled grasp lets go mid-carry. On current-capable models (XM430: operating mode 5, Current-based Position Control), Goal Current cannot exceed Current Limit, so grip with a Goal Current set below the level that trips the overload. Not every X-series model has this: the XL430-W250 has no mode 5 and no current registers. Check the equivalent shutdown and protection registers on other bus servos.
 - **Parallel-jaw solves most of it.** A well-tuned two-finger gripper covers the large majority of pick-and-place tasks; a dexterous hand adds cost, fragility, and a research problem. Recommend dexterity only when the task demonstrably needs in-hand manipulation.
 - **Simulated contact is not evidence a grasp works.** Contact/friction models diverge badly from reality — validate with analytic closure reasoning plus real trials, not sim success.
 - **Underactuated fingers hide their pose.** With tendons/linkages, motor angle does not determine finger configuration once in contact — don't build state estimates that assume it does.
 - **The TCP moves when the hand grasps.** Planning with the empty-hand TCP after grasping a long object causes collisions and misplacement — update the tool frame and attach the object's collision body.
 - **Grip force ≠ motor current alone.** Transmission friction and finger geometry reshape the force at the pad; calibrate the current-to-force mapping with a real measurement if force matters.
+- **A gripper's collaborative-safety claim belongs to the tested finger set.** ISO 10218-2:2025 incorporated the former ISO/TS 15066, and its Annex M, which is informative, keeps the pain-threshold tables. A vendor's compliance statement covers only the configuration it was tested in, so a different fingertip shape, material or sharp edge can change the result, and a risk assessment is still required per application. Hand grip force, speed and finger design to `robot-safety` before promising a cobot cell.
