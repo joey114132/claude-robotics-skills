@@ -1,17 +1,12 @@
 ---
 name: robotics-radar
-description: Self-maintenance sweep for this robotics skill collection — finds what changed in the field and writes it back into the skills. Use when the user asks to update/refresh the robotics skills, check whether the snapshots are stale, sweep for new robot concepts, platforms, theories or tooling, add coverage for a robot type the collection is missing, or runs this on a schedule. Also use before relying on the collection after a long gap. Orchestrates parallel research agents, verifies every claim against live sources, and commits the diff.
-allowed_tools:
+description: Self-maintenance sweep for this robotics skill collection — finds what changed in the field and writes it back into the skills. Use when the user asks to update/refresh the robotics skills, check whether the snapshots are stale, sweep for new robot concepts, platforms, theories or tooling, add coverage for a robot type the collection is missing, or runs this on a schedule. Do not use it to answer an ordinary robotics question; use the robot-* skills for that. Orchestrates parallel research agents, verifies every claim against live sources, and writes the verified changes back as a diff.
+allowed-tools:
   - Read
-  - Write
-  - Edit
-  - Bash
   - Grep
   - Glob
-  - Agent
   - WebSearch
   - WebFetch
-  - AskUserQuestion
 ---
 
 # Robotics Radar
@@ -38,13 +33,13 @@ For each rewritten file, spawn a second agent that tries to *disprove* it: fetch
 
 ### 4. Detect coverage gaps — new robot concepts
 
-Separately from updating existing files, ask: **has a robot type, paradigm, or theory appeared that no skill covers?** Search for emerging categories rather than known names. When something real and durable turns up, propose a new skill (same house structure: decision sequence, Loop modes, Modern scan, 5+ Gotchas) and add it — a collection that only refreshes what it already knows goes blind to whatever is actually new.
+Separately from updating existing files, ask: **has a robot type, paradigm, or theory appeared that no skill covers?** Search for emerging categories rather than known names. When something real and durable turns up, propose a new skill with the evidence, and add it only after the user agrees. Give it the structure the other skills have: the shared `## How to answer` block copied verbatim from a sibling skill, a `## The X decision sequence` of 5-7 decisions, a `## Modern scan` that contains the `**Live scan on every invocation.**` paragraph copied from a sibling, and a `## Gotchas` section with 5+ traps. Adding a skill also means updating the skills badge and tables in `README.md`, the "17 domains" descriptions in `.claude-plugin/plugin.json` and `marketplace.json`, and the skill map SVG (`assets/skill-map.svg`, including its aria-label), the tagline in `assets/hero.svg`, and the skill counts in `intent.md`. A collection that only refreshes what it already knows goes blind to whatever is actually new.
 
 Be strict about durability: one impressive demo is not a domain. Look for a category with multiple independent groups, real hardware or maintained software, and decisions a practitioner must actually make.
 
 ### 5. Write it back
 
-Update files in place, bump each `**Verified:**` date to today, bump `plugin.json` version (minor for new skills, patch for refreshes), and summarize the diff for the user: what changed, what died, what is new, what a reader should re-check. Commit in English. Never push without being asked.
+Update files in place, bump each `**Verified:**` date to today, bump `plugin.json` version (minor for new skills, patch for refreshes), and summarize the diff for the user: what changed, what died, what is new, what a reader should re-check. Leave the diff in the working tree and commit it (in English) only when the user asks. Never push without being asked; a Routine prompt that tells the run to push is that request.
 
 **Report the field, not the machinery.** A sweep summary is about what changed in robotics — what died, what is new, what a reader should re-check. Agent counts, file paths, and tooling mechanics belong in the commit, not in the summary the user reads.
 
@@ -60,7 +55,7 @@ When the sweep spans more than one domain, offer how to run it — and skip this
 - **Fast-forward** — sweep everything stale without asking, report the diff at the end. This is the mode for `/loop` and scheduled runs.
 - **Audit** — read-only. Report staleness, dead links, and suspected gaps; change nothing.
 
-When invoked inside a `/loop` or on a schedule, default to Fast-forward and keep each run scoped to the stalest 2-3 domains rather than all of them — small frequent sweeps beat one giant rewrite.
+When invoked inside a `/loop` or on a schedule, default to Fast-forward and keep each run scoped to the stalest 2-3 domains rather than all of them. Small frequent sweeps beat one giant rewrite. A `/loop` lasts at most 7 days and fires only while the session is open and idle, so for a standing schedule use a Routine. A Routine clones the repository fresh on every run and by default pushes its changes to a `claude/`-prefixed branch, so the sweep arrives as a branch to review and merge, not as edits to your local checkout. In an unattended run, report a proposed new skill with its evidence and do not add it.
 
 ## Gotchas
 

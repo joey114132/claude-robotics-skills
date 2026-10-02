@@ -10,7 +10,7 @@ Reference for `robot-hand` decision 1 (hand type) and decision 6 (teleop/retarge
 | Parallel-jaw (2-finger) | 1 | Reliable, cheap, analyzable, easy force control | Object size range limited by stroke | Most pick-and-place; the default answer | Robotiq 2F-85/140, servo-driven hobby grippers |
 | 3-finger adaptive | 2–4 | Centering, round objects, power grasps | Bulkier, slower | Cylinders, variable object sizes | Robotiq 3-Finger, BarrettHand-class |
 | 4-finger dexterous | 12–16 | In-hand manipulation research, tool use | Cost, fragility, control complexity | Research: regrasping, finger gaiting | Allegro Hand, LEAP Hand (open-source, low-cost) |
-| 5-finger anthropomorphic | 15–24+ | Human tool/environment compatibility, teleop naturalness | Highest cost & maintenance; tendon wear | Humanoid platforms, prosthetics research, human-tool tasks | Shadow Dexterous Hand, Schunk SVH, Inspire RH56-class, open-source designs |
+| 5-finger anthropomorphic | 6–24+ (e.g. Inspire RH56H1: 6; SCHUNK SVH: 9 drives; Robot Era XHand: 12; Shadow Dexterous Hand: 20 actuated, 24 joints) | Human tool/environment compatibility, teleop naturalness | Highest cost & maintenance; tendon wear | Humanoid platforms, prosthetics research, human-tool tasks | Shadow Dexterous Hand, Schunk SVH, Inspire RH56-class, open-source designs |
 | Underactuated / adaptive | few motors, many joints | Passive shape conformity, robust grasps cheaply | Finger pose unobservable, limited precision | Grasping varied objects without sensing | Yale OpenHand-style, spring-linkage designs |
 | Soft / compliant | continuum | Delicate & irregular objects, food | Low precision, hard to model | Food handling, fragile items | Festo-style pneumatic fingers, silicone jamming grippers |
 

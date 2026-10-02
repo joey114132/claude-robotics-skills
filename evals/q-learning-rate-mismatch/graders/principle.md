@@ -1,0 +1,8 @@
+---
+type: llm
+---
+The mechanism behind the trap is that an imitation policy such as ACT learns in discrete steps with a fixed step period (about 33 ms at 30 fps). Each action in a chunk is a target joint position for a given number of steps ahead, chunk length and any observation history are counted in steps, and the relationship between commanded targets and the measured joint state, which includes the low-level controller's tracking lag, is learned at that step period. Changing the step period at deployment rescales all of that, which is a distribution shift the policy was never trained on. Concretely at 8 Hz against 30 fps, the commanded trajectory plays back about 3.75 times slower, a 100-step chunk spans about 12.5 s instead of about 3.3 s, and anything moving in the scene or any contact timing no longer lines up with the policy's assumptions.
+
+PASS only if the reply explains that the policy's actions and chunks are indexed in steps at the recording rate, so a different step rate changes wall-clock speed or duration or controller-lag relationships, and gives at least one concrete consequence tied to that. If the reply quantifies the effect, the arithmetic must be right (30 divided by 8 is about 3.75). It must also be clear enough that a practitioner could act on it, for example by knowing to keep the rate or to resample and retrain.
+
+FAIL if the reply only says the policy is "out of distribution" or "may not work well" with no link to step-indexed time, or if it gives a wrong mechanism (for example that the network is rate-invariant, that only the camera frame rate matters, or that running slower is simply safer with identical behaviour).

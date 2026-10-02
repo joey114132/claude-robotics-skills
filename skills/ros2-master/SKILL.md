@@ -1,14 +1,12 @@
 ---
 name: ros2-master
-description: Senior ROS 2 architect advisor — decides WHICH approach fits before any code is written, in the same fundamentals-first, choose-and-loop style as robotics-advisor. Use when the user designs or restructures a ROS 2 system, asks "topic vs service vs action", "lifecycle node or plain", "which executor/QoS/middleware", plans a package or launch architecture, picks between ros2_control and a custom driver, chooses a simulator, or starts any new ROS 2 robot project. Also use for ROS 2 architecture reviews. Presents 2-4 verified options per decision and loops to the next decision after each choice.
-allowed_tools:
+description: Senior ROS 2 architect advisor — decides WHICH approach fits before any code is written. Use when the user designs or restructures a ROS 2 system, asks "topic vs service vs action", "lifecycle node or plain", "which executor/QoS/middleware", plans a package or launch architecture, picks between ros2_control and a custom driver, chooses a simulator, or starts any new ROS 2 robot project. Also use for ROS 2 architecture reviews.
+allowed-tools:
   - Read
-  - Bash
   - Grep
   - Glob
   - WebSearch
   - WebFetch
-  - AskUserQuestion
 ---
 
 # ROS 2 Master
@@ -34,7 +32,7 @@ The decision sequence below is your completeness tool, not the reply's outline. 
 
 ## Step 0 — Establish context (once per session)
 
-Before advising, pin down: **distro** (default to the latest LTS if unstated — verify what that currently is, don't assume), **target** (real robot / sim / both), **hardware** (compute, actuators, sensors, network), and **workspace state** (Glob for `package.xml`, read existing launch files — advise for the codebase that exists, not an imaginary one).
+Before advising, pin down: **distro** (default to the latest LTS whose stack is actually released for it. Verify what that is now, then check that the compute's Ubuntu version is a Tier 1 platform for it and that ros2_control, MoveIt, Nav2, the simulator and any vendor driver or GPU SDK have a release for that distro. A new LTS is usually Tier 1 only on the matching new Ubuntu, so a robot computer on an older Ubuntu may be Tier 3 and need a source build. Confirm in the release's platform-support page, since REP-2000 stops at Kilted), **target** (real robot / sim / both), **hardware** (compute, actuators, sensors, network), and **workspace state** (Glob for `package.xml`, read existing launch files — advise for the codebase that exists, not an imaginary one).
 
 ## The loop
 
@@ -42,9 +40,9 @@ Same shape as `robotics-advisor`: each iteration settles one decision, then surf
 
 1. **Frame** — name the single decision on the table (e.g., "how should the driver node manage its lifecycle?"). If the request is broad ("set up my robot's software"), decompose into an ordered sequence: interfaces → node architecture → comms/QoS → control stack → launch → sim/test, and start upstream.
 2. **Ground in fundamentals** — state the standard ROS 2 way and *why it's the default*: lifecycle nodes for anything owning hardware, explicit QoS everywhere, `*_interfaces` packages for message definitions, composition for intra-host data paths, `ros2_control` for actuator loops.
-3. **Verify the current state** — ROS 2 moves fast; distro EOLs, API deprecations, and middleware tiers change. Check docs.ros.org / release notes / REPs with WebSearch before asserting version-specific facts. Never answer distro-feature questions from memory. Run this check on **every invocation**: start from `references/landscape.md` (dated, source-verified snapshot), re-verify live, and update the file (and its Verified date) in the same session when reality has moved past it.
-4. **Present options** — AskUserQuestion, 2-4 options. Always include the boring standard stack as one option; mark a recommendation and say why. One line of gain/cost per alternative.
-5. **Deepen and loop** — apply the choice (scaffold, config, or explanation), update the decision stack, surface the next decision. Maintain the same `Decision stack` format as robotics-advisor.
+3. **Verify the current state** — ROS 2 moves fast; distro EOLs, API deprecations, and middleware tiers change. Check docs.ros.org / release notes / REPs with WebSearch before asserting version-specific facts. Never answer distro-feature questions from memory. Run this check on **every invocation**: start from `references/landscape.md` (dated, source-verified snapshot), re-verify live, and answer from the fresh finding (see Modern scan for when to write it back).
+4. **Present options** — 2-4, with the boring standard stack always one of them, a marked recommendation and one line of gain/cost per alternative. Ask with AskUserQuestion only when the choice is the user's own (see How to answer). Otherwise state your pick and move on.
+5. **Deepen and loop** — apply the choice (scaffold, config, or explanation), then surface the next decision. In `/loop` runs, report the decision stack at the end.
 
 ## Core decision axes (the usual suspects)
 
@@ -64,13 +62,31 @@ Same shape as `robotics-advisor`: each iteration settles one decision, then surf
 
 ## Modern scan
 
-**Live scan on every invocation.** Start from `references/landscape.md` — a dated, source-verified snapshot — then re-verify with fresh search before presenting: confirm the entries you use still hold and check for newer options. If the live scan contradicts or postdates the snapshot, update `references/landscape.md` (and its Verified date) in the same session — this skill keeps itself current.
+**Live scan on every invocation.** Start from `references/landscape.md`, a dated snapshot in which every entry carries its source, then re-verify with fresh search before presenting: confirm that the entries you use still hold and look for newer options. When the live scan contradicts or postdates the snapshot, answer from the fresh finding. Write it back into `references/landscape.md`, bumping its Verified date, only when this skill directory is a git checkout that the user maintains; a marketplace install lives in a plugin cache that the next update overwrites.
+
+## Static QoS audit
+
+Before answering any "why doesn't my subscriber receive" or QoS question on a live Python source tree, run
+`python3 ${CLAUDE_SKILL_DIR}/scripts/qos_audit.py <src_root>`. It statically resolves every `create_publisher`/`create_subscription`
+call's QoS and reports mismatches, instead of guessing from memory. Exit code 1 means it found one.
+- **INCOMPATIBLE** — same topic, in-repo pub and sub, and their QoS cannot connect (sub=RELIABLE vs pub=BEST_EFFORT,
+  or sub=TRANSIENT_LOCAL vs pub=VOLATILE). This is the root cause to report; fix the looser side to match.
+- **ONE-SIDED** — only a pub or only a sub found for that topic in this tree; the other side is external
+  (another package, another language) and cannot be verified statically — don't claim compatibility either way.
+- **UNRESOLVED** — topic or QoS built from something the script can't trace (a runtime variable, a function call);
+  check those by hand.
 
 ## Gotchas
 
 - **QoS mismatch fails silently.** "I publish but nothing arrives" is a QoS incompatibility until proven otherwise — check `ros2 topic info -v` before touching code.
-- **Synchronous service calls inside callbacks deadlock the executor.** Use async with a response callback, and put the client in a separate callback group.
-- **A dying node must not leave motors running.** Send zero-commands in `on_deactivate` AND the destructor — crashes skip the polite path.
+- **Synchronous service calls inside callbacks deadlock the executor.** Use an async call with a response callback. Lyrical's rclpy also adds the experimental `rclpy.experimental.AsyncNode`, which lets a callback `await client.call(...)`. If you must block, the calling callback and the client need different callback groups (or one Reentrant group) and a MultiThreadedExecutor. With the default single-threaded executor a separate group changes nothing, and a node whose callbacks all sit in the default Mutually Exclusive group behaves single-threaded even under a multi-threaded executor.
+- **A dying node must not leave motors running, and no code in that node can promise it.** Send zero-commands in `on_deactivate`, `on_shutdown`, `on_error` and the destructor for clean exits (from Kilted on, rclcpp's `LifecycleNode` destructor only logs a warning if the node was not shut down, Jazzy's does not even warn, and neither shuts the node down for you). A segfault, SIGKILL or hung process runs none of them, destructor included. The real guarantee lives downstream: a command timeout in the controller (for example `diff_drive_controller`'s `cmd_vel_timeout`, default 0.5 s, where 0.0 disables it) and a driver-side or firmware watchdog that disables output when commands stop.
+- **The default SIGINT handler kills your cleanup publish.** `rclpy.init()` installs a handler that shuts the global context down on Ctrl-C, so a zero-velocity command in `except KeyboardInterrupt` or `finally` raises `RCLError: publisher's context is invalid` and never leaves the process. In any node that must send a last command on exit, call `rclpy.init(signal_handler_options=SignalHandlerOptions.NO)` (`from rclpy.signals import SignalHandlerOptions`) and catch `KeyboardInterrupt` yourself. With `NO`, a bare `rclpy.spin(node)` that has no timer or traffic may not wake on Ctrl-C (measured on Jazzy), so keep a short timer on the node or loop on `spin_once(timeout_sec=0.1)`. Keep the deactivate path and a downstream watchdog as the backstop.
+- **An e-stop topic must be latched, and you migrate the publisher first.** With the default VOLATILE durability a node that starts or restarts while e-stop is held never receives the message, so its latch begins at "not pressed" and it keeps commanding while the button reads pressed. Use RELIABLE + TRANSIENT_LOCAL, depth 1, on both ends. Change the publisher before the subscribers, because a TRANSIENT_LOCAL publisher still connects to a VOLATILE subscriber while the reverse pairing does not connect, so switching subscribers first cuts e-stop during the rollout. `qos_audit.py` will not flag a VOLATILE/VOLATILE pair, since that pair is compatible.
 - **`use_sim_time` is all-or-nothing.** One node on wall clock while the rest follow `/clock` breaks TF lookups in ways that look like random bugs.
 - **Distro API drift is real.** ros2_control, CMake idioms, and bag formats have all changed between LTS releases — verify against the target distro's docs, not memory or old tutorials.
+- **A lifecycle publisher that is not active drops every message.** In rclcpp_lifecycle, `LifecyclePublisher::publish` returns without sending until the publisher is activated. rclcpp logs one warning per inactive period, and rclpy drops silently. The base-class `on_activate` is what activates the node's publishers, so an `on_activate` override that does not chain to it leaves them silent. A driver that publishes from a timer therefore looks dead, and the cause is not QoS. Check `ros2 lifecycle get <node>` and the node's `on_activate` before debugging QoS.
+- **A stale `ros2 daemon` can show an empty graph while everything is up.** `ros2 node list` and `ros2 topic list` go through a background daemon that keeps the environment (discovery range, DDS profile, RMW) it was spawned with, so a daemon started before the network or profile was configured can report zero nodes. Run `ros2 daemon stop` before concluding a robot is down. The next command respawns it with the current environment. Do this before restarting any shared hardware.
+- **`rmw_zenoh_cpp` needs a router, and a daemon from another RMW breaks the CLI.** Multicast discovery is off by default, so nodes find each other through a Zenoh router (`ros2 run rmw_zenoh_cpp rmw_zenohd`). Without one, or without `ZENOH_CONFIG_OVERRIDE='scouting/multicast/enabled=true'`, "nodes can't see each other" is a missing router and not a QoS fault. A `ros2 daemon` started under another RMW must be stopped first or `ros2 node list` and similar commands query the wrong graph. Discovery stays host-local until each host's router is configured to connect to the others.
+- **Large samples over Wi-Fi can freeze a subscriber for about 30 s.** When one IP fragment of a large UDP sample (images, point clouds) is lost, the orphaned fragments fill the Linux reassembly buffer (`net.ipv4.ipfrag_high_thresh`, default 256 KB) and block new ones until `net.ipv4.ipfrag_time` (default 30 s) expires. It affects every DDS vendor and looks like a hang, not a QoS mismatch. BEST_EFFORT QoS improves it somewhat but does not remove it. On the receiving host, lower `net.ipv4.ipfrag_time` (the docs use 3) and raise `net.ipv4.ipfrag_high_thresh` (the docs use 134217728, 128 MB). These sysctls are global to the host and do not persist across reboots.
 - **Never emit ROS 1 code.** `rospy`/`roscpp` patterns in an answer mean the whole answer is wrong.

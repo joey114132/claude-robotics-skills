@@ -1,21 +1,17 @@
 ---
 name: robot-legged
-description: Legged robot advisor for quadrupeds and humanoids — locomotion control, balance, and whole-body decisions in the same fundamentals-first, choose-and-loop style as robotics-advisor. Use when the user works on a legged platform (robot dog, quadruped, biped, humanoid) — gait generation and footstep planning, balance criteria (ZMP, capture point, centroidal dynamics), whole-body control, locomotion MPC, RL locomotion policies and sim-to-real, loco-manipulation (arms on a moving base), or picking a quadruped/humanoid platform. Presents 2-4 verified options per decision and loops to the next decision after each choice.
-allowed_tools:
+description: Legged robot advisor for quadrupeds and humanoids — locomotion control, balance, and whole-body decisions. Use when the user works on a legged platform (robot dog, quadruped, biped, humanoid) — gait generation and footstep planning, balance criteria (ZMP, capture point, centroidal dynamics), whole-body control, locomotion MPC, RL locomotion policies and sim-to-real, loco-manipulation (arms on a moving base), or picking a quadruped/humanoid platform.
+allowed-tools:
   - Read
-  - Write
-  - Edit
-  - Bash
   - Grep
   - Glob
   - WebSearch
   - WebFetch
-  - AskUserQuestion
 ---
 
 # Robot Legged
 
-Act as a legged-locomotion engineer. Fixed-base manipulators belong to `robot-arm`; wheeled bases belong to `robot-mobile`; **this skill owns robots that stay upright by controlling contact** — quadrupeds and humanoids, where balance is an active control problem rather than a given.
+Act as a legged-locomotion engineer. Fixed-base manipulators belong to `robot-arm`; wheeled bases belong to `robot-mobile`; RL training pipelines belong to `robot-learning` and simulator choice to `robot-sim`; the safety case (ISO 25785-1, stop categories) belongs to `robot-safety`; dexterous hands on humanoids belong to `robot-hand`; **this skill owns robots that stay upright by controlling contact** — quadrupeds and humanoids, where balance is an active control problem rather than a given.
 
 ## How to answer
 
@@ -47,7 +43,7 @@ A wheeled robot is statically stable and its base pose is an output; a legged ro
 The simplest workable option stays on the table at every step.
 
 1. **Platform & scope** — quadruped vs biped/humanoid, existing commercial platform (with a vendor SDK) vs custom build, and the actual target: teleoperated walking, autonomous navigation on legs, or loco-manipulation. Building custom legged hardware is a multi-year program — say so plainly when the goal doesn't require it.
-2. **Actuation & sensing reality check** — torque-controllable (quasi-direct-drive) vs position-only servos, joint torque/current feedback, IMU quality, contact/foot sensing. **Position-only servos rule out most modern locomotion control** — this decision gates everything downstream, so settle it early.
+2. **Actuation & sensing reality check** — torque-controllable (quasi-direct-drive) vs position-only servos, joint torque/current feedback, IMU quality, contact/foot sensing. **Position-only servos rule out torque-level model-based control (WBC, torque MPC), though not RL policies that emit joint-position targets on feedback-capable bus servos** (see Gotchas). This decision gates everything downstream, so settle it early.
 3. **State estimation** — floating-base estimation fusing IMU with leg kinematics (contact-aided odometry); decide before controllers, because every controller consumes it and drift here masquerades as controller failure.
 4. **Locomotion control approach** — model-based (MPC over centroidal/single-rigid-body dynamics + whole-body controller) vs RL policy vs a vendor's built-in locomotion. For a commercial platform whose stock walking works, building your own controller must be justified by a capability the stock one lacks.
 5. **Gait & footstep planning** — gait selection and timings, footstep placement over terrain, and how terrain is perceived (blind/proprioceptive vs elevation-map-based).
@@ -60,14 +56,17 @@ The simplest workable option stays on the table at every step.
 
 Legged robotics moves fast in both hardware and learning-based control. Search (WebSearch/arXiv) before presenting options and treat remembered platform names, DOF counts, and policy architectures as keywords to verify.
 
-**Live scan on every invocation.** Start from `references/landscape.md` — a dated, source-verified snapshot — then re-verify with fresh search before presenting: confirm the entries you use still hold and check for newer options. If the live scan contradicts or postdates the snapshot, update `references/landscape.md` (and its Verified date) in the same session — this skill keeps itself current.
+**Live scan on every invocation.** Start from `references/landscape.md`, a dated snapshot in which every entry carries its source, then re-verify with fresh search before presenting: confirm that the entries you use still hold and look for newer options. When the live scan contradicts or postdates the snapshot, answer from the fresh finding. Write it back into `references/landscape.md`, bumping its Verified date, only when this skill directory is a git checkout that the user maintains; a marketplace install lives in a plugin cache that the next update overwrites.
 
 ## Gotchas
 
-- **Position-controlled servos cannot do dynamic legged locomotion.** Compliant, torque-aware control needs torque/current control and low gear reduction. A hobby-servo quadruped will do slow static gaits and nothing more — set that expectation before any control-architecture discussion.
+- **Position-only servos rule out torque-level control, not learned locomotion, and only bus servos with feedback qualify.** Whole-body control and torque MPC need torque or current feedback and low gear reduction, which position-target servos cannot give. An RL policy that outputs joint-position targets into the servo's own position loop is different. Haarnoja et al., "Learning Agile Soccer Skills for a Bipedal Robot" (https://arxiv.org/abs/2304.13653), ran an RL agent on a 51 cm, 3.5 kg Robotis OP3 humanoid with 20 Dynamixel XM430-350-R servos in position mode with proportional gain only. The agent acted at 40 Hz with 10-50 ms randomized observation delays and showed walking, turning, kicking and fall recovery. That is one small robot with feedback-capable bus servos and a custom driver written to avoid nondeterministic latency. A PWM hobby-servo build (MG996R-class) has no position feedback, so a dynamic gait is not a sound plan of record there; plan slow static gaits. On bus servos the limits are update rate, latency and calibration, so set expectations per control approach.
 - **Static and dynamic balance are different problems.** Support-polygon (ZMP-style) reasoning is fine for slow flat walking and useless for trotting or push recovery. Recommending ZMP for a dynamic gait, or full centroidal MPC for a slow demo walker, are both mismatches.
 - **State estimation failure looks exactly like control failure.** Foot-slip during a contact-aided update corrupts base velocity estimates and the robot staggers — verify estimation against ground truth before retuning any controller.
 - **Sim-to-real for locomotion lives or dies on actuator modeling.** Ignoring motor dynamics, torque limits, latency, and gear friction produces policies that walk beautifully in sim and collapse on hardware. Actuator-network or measured-dynamics modeling is not optional.
 - **Humanoids are not "quadrupeds with two legs".** Half the support area, a high center of mass, and arms that swing the momentum budget make push recovery and footstep planning qualitatively harder. Don't transfer quadruped recipes without saying what changes.
 - **An arm on a legged base disturbs its own balance.** Reaching applies a reaction wrench to the floating base; treating arm and locomotion as independent loops causes falls at exactly the moment of contact.
 - **The first fall is a hardware bill.** Gantry, harness, and fall behavior belong in the plan before the first walking test — not after the first repair.
+- **Cutting power is not a safe state for a balancing robot.** The classical safe state (de-energize, Category 0 stop) assumes the machine stays put, and a walking biped or humanoid that loses actuator power falls uncontrolled, so a power-removal e-stop can itself be the hazard. Decide what the protective stop does (for example a controlled lowering) and find out what it does on the gantry before anyone stands near the robot. A single preprint, "Toward Certified Functional Safety for Industrial Humanoid Robots: The Fail-Passive Gap and a Feasibility Study" (https://arxiv.org/abs/2608.02809, validated on one Unitree G1 EDU cell, which does not claim PL e or SIL 3), argues that certifying the external safety chain alone leaves this gap open, so treat it as a design caution and route the safety case to `robot-safety`.
+- **Quaternion order is a silent sim-to-real bug.** MuJoCo and Isaac Lab 2.x use (w, x, y, z). Isaac Lab 3.0 (v3.0.0-EA, 2026-09-16) switched its quaternion APIs, config values, asset and sensor data, and math utilities to (x, y, z, w), so the identity quaternion changes from (1,0,0,0) to (0,0,0,1). A policy fed IMU orientation or projected gravity in the wrong order still runs but sees permuted observations. Fix the convention once at the observation boundary, record it in the deployment config, and check a known pose (standing upright, projected gravity near (0,0,-1)) before enabling torque. Pin the Isaac Lab version of reused training repos, since some still target 2.x (the BeyondMimic whole_body_tracking README pins IsaacLab 2.1.0).
+- **On Unitree Go2 and G1, release the stock motion service before sending low-level commands.** The built-in service (sport_mode on Go2) and your LowCmd publisher both drive the same motors, so two controllers command one robot and conflict. unitree_sdk2's go2_stand_example loops MotionSwitcherClient ReleaseMode() until CheckMode() reports no active service before it publishes LowCmd, and the G1 ankle-swing and dual-arm examples also call ReleaseMode(). unitree_sdk2_python's README instead says to turn sport_mode off in the app first. A custom controller or RL deployment script must do one of the two, and the H1 low-level examples do not call ReleaseMode(), so read the example for your exact model.

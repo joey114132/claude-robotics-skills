@@ -1,0 +1,9 @@
+---
+description: PX4 Offboard switch is rejected or drops to Hold because the companion starts streaming setpoints only after the mode switch; user asks which parameter to loosen.
+tags: [quality, robot-aerial]
+expected_outcome: "An expert answer says the framing is backwards. PX4 requires a stream of proof-of-life messages (MAVLink setpoint messages, or on the ROS 2 / uXRCE-DDS path OffboardControlMode, which doubles as the heartbeat and declares which setpoint types the external controller supplies) to already be arriving before arming in Offboard or switching to Offboard, and to keep arriving; the documented rate is about 2 Hz minimum. The mode switch is rejected without a stream, and PX4 exits Offboard if the stream stops for longer than COM_OF_LOSS_T, then applies the failsafe set by COM_OBL_RC_ACT. So the fix is to start a timer-driven publisher of OffboardControlMode plus a setpoint (e.g. TrajectorySetpoint holding the current position) at a steady rate well above 2 Hz (the PX4 example uses 10 Hz) from node start, send the VehicleCommand only after that stream is running, and keep publishing afterwards. Loosening COM_OF_LOSS_T is the wrong fix. Sources: https://docs.px4.io/main/en/flight_modes/offboard.html and https://docs.px4.io/main/en/ros2/offboard_control.html (checked 2026-10-02)."
+max_turns: 12
+timeout_seconds: 600
+allowed_tools: [Read, Grep, Glob, Skill]
+---
+I'm running PX4 SITL with a ROS 2 node over uXRCE-DDS, aiming at a Jetson companion computer later. On a button press my node sends a VehicleCommand to switch to Offboard, and only once the mode has actually changed does it start publishing its offboard messages (OffboardControlMode and TrajectorySetpoint), since it seems pointless to send those to a vehicle that isn't listening yet. The switch is either rejected or the vehicle drops back out of Offboard within a second or so. Which failsafe parameter should I loosen so it stops kicking me out?

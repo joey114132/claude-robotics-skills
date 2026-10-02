@@ -1,7 +1,6 @@
 {
-  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "claude-robotics-skills",
-  "description": "Fundamentals-first robotics skills for Claude Code: method advising (Craig 3rd ed.), ROS 2 architecture, robot arm integration, and gripper/hand control.",
+  "description": "Fundamentals-first robotics skills for Claude Code: 17 domain advisors (method fundamentals, ROS 2, arms, hands, mobile, legged, aerial, marine, soft, perception, safety, simulation, fleets, swarms, field, medical, learning) plus a self-maintenance radar. Every landscape entry carries a live source.",
   "owner": {
     "name": "joey114132"
   },
@@ -9,7 +8,7 @@
     {
       "name": "robotics-skills",
       "source": "./",
-      "description": "Choose-and-loop robotics advisors across 17 domains (arms, hands, mobile, legged, aerial, marine, soft, perception, safety, sim, fleet, swarm, field, medical, learning, ROS 2, fundamentals) plus a self-maintenance radar.",
+      "description": "Fundamentals-first robotics advisors across 17 domains (arms, hands, mobile, legged, aerial, marine, soft, perception, safety, sim, fleet, swarm, field, medical, learning, ROS 2, fundamentals) plus a self-maintenance radar.",
       "category": "robotics"
     }
   ]

@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 430" width="900" height="430" role="img" aria-label="Grouped bar chart: pass rate of skill-guided answers versus baseline on 4 graders, 14 robotics cases">
+<style>
+    .surface { fill: #FAF9F7; }
+    .h1   { fill: #1A1A1A; }
+    .h2   { fill: #6B645C; }
+    .lab  { fill: #3D3934; }
+    .val  { fill: #6B645C; }
+    .ax   { fill: #A79E95; }
+    .grid { stroke: #E6E1DB; }
+    .s1   { fill: #D97757; }
+    .s2   { fill: #5B8DEF; }
+    @media (prefers-color-scheme: dark) {
+      .surface { fill: #16151A; }
+      .h1   { fill: #F5F3F0; }
+      .h2   { fill: #A9A29A; }
+      .lab  { fill: #D8D3CC; }
+      .val  { fill: #A9A29A; }
+      .ax   { fill: #6E675F; }
+      .grid { stroke: #322F3A; }
+      .s1   { fill: #CF6E4E; }
+    }
+  </style>
+<rect class="surface" width="900" height="430" rx="16"/>
+<g font-family="ui-sans-serif,-apple-system,Segoe UI,Inter,Helvetica,Arial,sans-serif">
+<text class="h1" x="40" y="46" font-size="19" font-weight="700">Does the skill actually make the answer more expert?</text>
+<text class="h2" x="40" y="70" font-size="13">14 cases. Each reply graded pass or fail by an LLM judge on four checks (14 with skill / 14 baseline runs).</text>
+<circle class="s1" cx="46" cy="92" r="5.5"/>
+<text class="lab" x="58" y="97" font-size="13" font-weight="600">With skill</text>
+<text class="val" x="138" y="97" font-size="13">91% overall</text>
+<circle class="s2" cx="238" cy="92" r="5.5"/>
+<text class="lab" x="250" y="97" font-size="13" font-weight="600">Baseline</text>
+<text class="val" x="314" y="97" font-size="13">89% overall</text>
+<line class="grid" x1="262.0" y1="100" x2="262.0" y2="346" stroke-width="1"/>
+<text class="ax" x="262.0" y="366" font-size="11" text-anchor="middle">0%</text>
+<line class="grid" x1="398.5" y1="100" x2="398.5" y2="346" stroke-width="1"/>
+<text class="ax" x="398.5" y="366" font-size="11" text-anchor="middle">25%</text>
+<line class="grid" x1="535.0" y1="100" x2="535.0" y2="346" stroke-width="1"/>
+<text class="ax" x="535.0" y="366" font-size="11" text-anchor="middle">50%</text>
+<line class="grid" x1="671.5" y1="100" x2="671.5" y2="346" stroke-width="1"/>
+<text class="ax" x="671.5" y="366" font-size="11" text-anchor="middle">75%</text>
+<line class="grid" x1="808.0" y1="100" x2="808.0" y2="346" stroke-width="1"/>
+<text class="ax" x="808.0" y="366" font-size="11" text-anchor="middle">100%</text>
+<text class="lab" x="246" y="136" font-size="13.5" font-weight="600" text-anchor="end">Caught the trap / gave the expert call</text>
+<path class="s1" d="M262 116 h542.0 a4 4 0 0 1 4 4 v12 a4 4 0 0 1 -4 4 h-542.0 z"/>
+<text class="val" x="818.0" y="130" font-size="12.5" font-weight="600">100%</text>
+<path class="s2" d="M262 138 h542.0 a4 4 0 0 1 4 4 v12 a4 4 0 0 1 -4 4 h-542.0 z"/>
+<text class="val" x="818.0" y="152" font-size="12.5" font-weight="600">100%</text>
+<text class="lab" x="246" y="198" font-size="13.5" font-weight="600" text-anchor="end">Explained the principle</text>
+<path class="s1" d="M262 178 h542.0 a4 4 0 0 1 4 4 v12 a4 4 0 0 1 -4 4 h-542.0 z"/>
+<text class="val" x="818.0" y="192" font-size="12.5" font-weight="600">100%</text>
+<path class="s2" d="M262 200 h503.0 a4 4 0 0 1 4 4 v12 a4 4 0 0 1 -4 4 h-503.0 z"/>
+<text class="val" x="779.0" y="214" font-size="12.5" font-weight="600">93%</text>
+<text class="lab" x="246" y="260" font-size="13.5" font-weight="600" text-anchor="end">Committed to a recommendation</text>
+<path class="s1" d="M262 240 h542.0 a4 4 0 0 1 4 4 v12 a4 4 0 0 1 -4 4 h-542.0 z"/>
+<text class="val" x="818.0" y="254" font-size="12.5" font-weight="600">100%</text>
+<path class="s2" d="M262 262 h542.0 a4 4 0 0 1 4 4 v12 a4 4 0 0 1 -4 4 h-542.0 z"/>
+<text class="val" x="818.0" y="276" font-size="12.5" font-weight="600">100%</text>
+<text class="lab" x="246" y="322" font-size="13.5" font-weight="600" text-anchor="end">Sourced decaying figures</text>
+<path class="s1" d="M262 302 h347.0 a4 4 0 0 1 4 4 v12 a4 4 0 0 1 -4 4 h-347.0 z"/>
+<text class="val" x="623.0" y="316" font-size="12.5" font-weight="600">64%</text>
+<path class="s2" d="M262 324 h347.0 a4 4 0 0 1 4 4 v12 a4 4 0 0 1 -4 4 h-347.0 z"/>
+<text class="val" x="623.0" y="338" font-size="12.5" font-weight="600">64%</text>
+<text class="ax" x="40" y="406" font-size="11.5">Pass rate = passed runs / scored runs, pooled over all cases. The skill-fired check is an indicator and is not charted.</text>
+</g></svg>
