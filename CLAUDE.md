@@ -10,7 +10,7 @@ Collection of Claude Code robotics skills. No application code: markdown skill d
 - `skills/robotics-radar/` — the maintenance sweep that refreshes the other skills
 - `scripts/check_sources.py` — link and format checker; stdlib only, non-zero exit on failure (`test_check_sources.py` tests it)
 - `scripts/make_bench_chart.py` — charts per-grader pass rates from `claude plugin eval --json` files into an SVG
-- `evals/` — the `claude plugin eval` suite (14 `quality` cases, 30 `routing` cases); `evals/results/` is gitignored
+- `evals/` — the `claude plugin eval` suite (14 `quality` cases, 31 `routing` cases); `evals/results/` is gitignored
 - `EVAL.md` — benchmark history and how to run the suite; `intent.md` and `intent/` — why the repo exists and its backlog
 - `assets/*.svg` — README graphics, theme-aware (light/dark via `prefers-color-scheme`)
 - On this machine the skills are symlinked into `~/.claude/skills` (no duplicate plugin install needed)
@@ -34,7 +34,7 @@ The Guided / Fast-forward / Audit "Loop modes" section exists only in `robotics-
 - **Live search on every invocation** — skills never answer from static content alone. `landscape.md` is a starting point with a Verified date; each invocation re-verifies it. The skill writes a changed finding back into `landscape.md` (bumping the date) only when its directory is a git checkout the user maintains. A marketplace install lives in a plugin cache that the next update overwrites, so a write there is lost.
 - **Every landscape entry needs a live source** — a `Source: <url>` (an `arxiv.org/abs/` link for papers), verified at write time. A bare `arXiv:` ID does not count. Never from memory. Include Chinese-language / China-market queries; a large share of new hardware ships there first. When you change entries, rewrite the Verified line as `**Verified: <today> (changed entries; rest <previous date>).**` and keep any earlier partial dates. The checker uses the oldest date for its 180-day staleness rule.
 - **Verify with adversarial agents** — when a research agent writes a landscape, a second agent should try to disprove it and delete what it can't confirm. Authors over-claim.
-- Run `python3 scripts/check_sources.py` before committing landscape changes. It fails on an entry without a source URL, a dead URL, or a snapshot older than 180 days. 403/429 are anti-bot responses, not dead links, and the script reports them separately. `--offline` checks format only.
+- Run `python3 scripts/check_sources.py` before committing landscape changes. It fails on an entry without a source URL, a dead URL (landscape entries and links written inline in each SKILL.md), or a snapshot older than 180 days. 403/429 are anti-bot responses, not dead links, and the script reports them separately. `--offline` checks format only.
 
 ## Evals
 

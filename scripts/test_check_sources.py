@@ -10,6 +10,7 @@ import subprocess
 import sys
 import threading
 import time
+from datetime import date
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
@@ -192,6 +193,22 @@ def test_404_still_fails_as_dead():
 def test_dns_failure_still_fails_as_dead():
     problems, out = check_url("http://no-such-host.invalid/x")
     assert problems == 1 and "DEAD" in out, out
+
+
+def test_skill_md_inline_links_are_probed_without_format_rules():
+    import tempfile
+
+    with tempfile.TemporaryDirectory() as d, stub_server() as base:
+        land = Path(d) / "s" / "references" / "landscape.md"
+        land.parent.mkdir(parents=True)
+        land.write_text(f"**Verified: {date.today()}.**\n- **Foo** - x. Source: {base}/ok\n")
+        skill = Path(d) / "s" / "SKILL.md"  # no Verified header, no entries: not a landscape
+        skill.write_text(f"See [the paper]({base}/gone) and `{base}/ok`.\n")
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            problems = cs.check([land], offline=False, skill_mds=[skill])
+        out = buf.getvalue()
+    assert problems == 1 and "DEAD [404]" in out and "s/SKILL.md" in out, out
 
 
 if __name__ == "__main__":

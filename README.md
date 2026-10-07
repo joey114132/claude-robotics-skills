@@ -120,7 +120,7 @@ Two effects are large and reproduce; they cancel. The skills **cite about 20 poi
 
 ## Measuring it
 
-[EVAL.md](EVAL.md) holds the nine-round blind benchmark history. The `evals/` directory holds the current suite for `claude plugin eval`: 14 trap cases that grade answer quality and 30 routing cases that check the right skill fires. EVAL.md has the exact commands and results.
+[EVAL.md](EVAL.md) holds the nine-round blind benchmark history. The `evals/` directory holds the current suite for `claude plugin eval`: 14 trap cases that grade answer quality and 31 routing cases that check the right skill fires. EVAL.md has the exact commands and results.
 
 First results, 2026-10-02 (plugin 0.7.0, one run per arm, skill / baseline):
 

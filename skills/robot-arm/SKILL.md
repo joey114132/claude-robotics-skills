@@ -1,6 +1,6 @@
 ---
 name: robot-arm
-description: Robot arm (manipulator) build-and-integration advisor — walks the full pipeline from URDF to moving hardware. Use when the user builds, models, simulates, or integrates a robot arm — URDF/xacro authoring, IK solver choice, ros2_control hardware interfaces for servo/bus actuators (Feetech, Dynamixel, CAN drives), MoveIt 2 setup, trajectory execution, teleoperation (leader-follower), calibration, joint limits and safety — including hobby arms and research arms alike.
+description: Robot arm (manipulator) build-and-integration advisor — walks the full pipeline from URDF to moving hardware. Use when the user builds, models, simulates, or integrates a robot arm — URDF/xacro authoring, IK solver choice, ros2_control hardware interfaces for servo/bus actuators (Feetech, Dynamixel, CAN drives), MoveIt 2 setup (including the tool frame/TCP and adding a mounted gripper to the planning scene and collision model), trajectory execution, teleoperation (leader-follower), calibration, joint limits and safety — including hobby arms and research arms alike.
 allowed-tools:
   - Read
   - Grep

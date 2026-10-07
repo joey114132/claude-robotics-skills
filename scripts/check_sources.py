@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Check that every landscape.md entry carries a source and that its URL still resolves.
 
+Links written inline in each SKILL.md are probed for liveness too (no format rules apply there).
+
 Run from the repo root:
     python3 scripts/check_sources.py              # check every skill
     python3 scripts/check_sources.py robot-arm    # check one skill
@@ -31,11 +33,13 @@ import time
 import urllib.error
 import urllib.request
 from datetime import date, datetime
+from collections.abc import Sequence
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 ENTRY = re.compile(r"^- \*\*")
-URL = re.compile(r"https?://[^\s<>()\[\]]+")
+URL = re.compile(r"https?://(?:[^\s<>()\[\]]|\([^\s<>()\[\]]*\))+")  # keeps a balanced (x), drops a markdown link's )
+TRAILING = ".,;:!?`*'\""  # prose punctuation that ends a sentence, not a URL
 VERIFIED = re.compile(r"\*\*Verified:[^\n]*?\*\*")  # the whole header, partial dates included
 DATE = re.compile(r"\d{4}-\d{2}-\d{2}")
 STALE_DAYS = 180
@@ -93,7 +97,7 @@ def _probe_once(url: str) -> tuple[str, int | str]:
     return url, "unreachable"
 
 
-def check(paths: list[Path], offline: bool) -> int:
+def check(paths: list[Path], offline: bool, skill_mds: Sequence[Path] = ()) -> int:
     problems = 0
     urls: dict[str, list[str]] = {}
 
@@ -133,9 +137,14 @@ def check(paths: list[Path], offline: bool) -> int:
                 problems += 1
                 continue
             for u in URL.findall(ln):
-                urls.setdefault(u.rstrip(".,);"), []).append(f"{skill}/{name}")
+                urls.setdefault(u.rstrip(TRAILING), []).append(f"{skill}/{name}")
 
-    print(f"\n{len(urls)} unique URLs across {len(paths)} files")
+    # SKILL.md bodies cite links inline too. They are not snapshots, so only liveness applies.
+    for path in skill_mds:
+        for u in URL.findall(path.read_text(encoding="utf-8")):
+            urls.setdefault(u.rstrip(TRAILING), []).append(f"{path.parts[-2]}/SKILL.md")
+
+    print(f"\n{len(urls)} unique URLs across {len(paths) + len(skill_mds)} files")
     if offline:
         print("--offline: skipping network checks")
         return problems
@@ -184,13 +193,15 @@ def main() -> int:
     args, offline = ns.skills, ns.offline
 
     paths = sorted(REPO.glob("skills/*/references/landscape.md"))
+    skill_mds = sorted(REPO.glob("skills/*/SKILL.md"))
     if args:
         paths = [p for p in paths if p.parts[-3] in args]
+        skill_mds = [p for p in skill_mds if p.parts[-2] in args]
         if not paths:
             print(f"no landscape.md for: {', '.join(args)}")
             return 1
 
-    return 1 if check(paths, offline) else 0
+    return 1 if check(paths, offline, skill_mds) else 0
 
 
 def _self_check() -> None:
@@ -200,6 +211,8 @@ def _self_check() -> None:
     assert ENTRY.match(good) and ENTRY.match(bad)
     assert URL.findall(good) == ["https://example.com/x"]
     assert not URL.findall(bad)
+    assert URL.findall("see [x](https://a.org/p) and https://en.wikipedia.org/wiki/Foo_(bar).") == [
+        "https://a.org/p", "https://en.wikipedia.org/wiki/Foo_(bar)."]
     assert DATE.findall(VERIFIED.search("**Verified: 2026-08-05.** blah").group(0)) == ["2026-08-05"]
     partial = VERIFIED.search("**Verified: 2026-10-02 (changed entries; rest 2026-08-05).** blah")
     assert min(DATE.findall(partial.group(0))) == "2026-08-05"
