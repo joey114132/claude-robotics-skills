@@ -1,13 +1,13 @@
 {
   "name": "robotics-skills",
   "displayName": "Robotics Skills",
-  "version": "0.7.1",
-  "description": "Robotics advisors covering 17 domains (method fundamentals, ROS 2 architecture, arms, hands, mobile bases, legged robots, aerial, marine, soft robots, perception, safety, simulation, fleets, swarms, field, medical, and robot learning) plus robotics-radar, a self-maintenance sweep. Each skill grounds answers in fundamentals, runs a live source-verified search on every invocation, and leads with a verdict and the options it weighed.",
+  "version": "0.8.0",
+  "description": "Robotics advisors covering 18 domains (method fundamentals, ROS 2 architecture, arms, hands, mobile bases, legged robots, aerial, marine, soft robots, perception, safety, simulation, fleets, swarms, field, medical, robot learning, and the harness that wraps a learned policy), two tool skills for recorded-episode health and video relay judder, an audit team skill with three read-only agents and a workflow, plus robotics-radar, a self-maintenance sweep. Each advisor grounds answers in fundamentals, runs a live source-verified search on every invocation, and leads with a verdict and the options it weighed.",
   "author": {
     "name": "joey114132"
   },
   "homepage": "https://github.com/joey114132/claude-robotics-skills",
   "repository": "https://github.com/joey114132/claude-robotics-skills",
   "license": "MIT",
-  "keywords": ["robotics", "ros2", "manipulator", "gripper", "dexterous-hand", "kinematics", "navigation", "slam", "open-rmf", "fleet", "imitation-learning", "quadruped", "humanoid", "legged-locomotion", "skills"]
+  "keywords": ["robotics", "ros2", "manipulator", "gripper", "dexterous-hand", "kinematics", "navigation", "slam", "open-rmf", "fleet", "imitation-learning", "quadruped", "humanoid", "legged-locomotion", "skills", "physical-ai", "vla", "rosbag2", "dataset-quality", "teleoperation", "agents"]
 }

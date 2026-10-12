@@ -1,16 +1,20 @@
 # claude-robotics-skills
 
-Collection of Claude Code robotics skills. No application code: markdown skill definitions plus small maintenance scripts (`scripts/check_sources.py`, `scripts/make_bench_chart.py`, and one skill-local audit script, `skills/ros2-master/scripts/qos_audit.py`, an allowed exception).
+Collection of Claude Code robotics skills, agents and one workflow. No application code: markdown skill and agent definitions plus small maintenance scripts (`scripts/check_sources.py`, `scripts/make_bench_chart.py`) and three skill-local tool scripts, each an allowed exception with its tests next to it: `skills/ros2-master/scripts/qos_audit.py`, `skills/robot-data-health/scripts/data_health.py` and `skills/video-relay-cadence/scripts/relay_cadence.py`.
 
 ## Layout
 
 - `.claude-plugin/marketplace.json` + `plugin.json` — plugin manifests (`/plugin marketplace add joey114132/claude-robotics-skills`)
 - `skills/<name>/SKILL.md` — skill body (frontmatter: name, description, allowed-tools)
-- `skills/<name>/references/landscape.md` — dated, source-verified snapshot of that domain's tooling and research
+- `skills/<name>/references/landscape.md` — dated, source-verified snapshot of that domain's tooling and research (every skill except `robot-audit-team`, see below)
+- `skills/<name>/references/*.md` — other supporting files, for example `skills/physical-ai-harness/references/gate-template.md`
+- `skills/<name>/scripts/` and `tests/` — tool skills only (`ros2-master`, `robot-data-health`, `video-relay-cadence`): stdlib-plus-ROS Python, read-only against the user's data, tested in place
+- `agents/*.md` — plugin agents (`harness-axis-auditor`, `finding-skeptic`, `robot-fault-hunter`): frontmatter `name`, `description` written as a "use when" routing rule, read-only `tools`
+- `workflows/robot-harness-audit.js` — a Claude Code Workflow script (plain JS, `export const meta` as a pure literal, no `Date.now` or `Math.random`) that wires the agents; `robot-audit-team` explains when to run it
 - `skills/robotics-radar/` — the maintenance sweep that refreshes the other skills
 - `scripts/check_sources.py` — link and format checker; stdlib only, non-zero exit on failure (`test_check_sources.py` tests it)
 - `scripts/make_bench_chart.py` — charts per-grader pass rates from `claude plugin eval --json` files into an SVG
-- `evals/` — the `claude plugin eval` suite (14 `quality` cases, 31 `routing` cases); `evals/results/` is gitignored
+- `evals/` — the `claude plugin eval` suite (14 `quality` cases, 34 `routing` cases); `evals/results/` is gitignored
 - `EVAL.md` — benchmark history and how to run the suite; `intent.md` and `intent/` — why the repo exists and its backlog
 - `assets/*.svg` — README graphics, theme-aware (light/dark via `prefers-color-scheme`)
 - On this machine the skills are symlinked into `~/.claude/skills` (no duplicate plugin install needed)
@@ -23,6 +27,8 @@ Collection of Claude Code robotics skills. No application code: markdown skill d
 4. `## The X decision sequence` — 5-7 decisions in dependency order, each with its boring default and what makes you deviate. First decision is an honest scoping question. It is an internal completeness checklist, not the reply's outline. (Some skills title it "The X pipeline" or "The loop".)
 5. `## Modern scan` — must contain the `**Live scan on every invocation.**` paragraph, copied from a sibling skill.
 6. `## Gotchas` — 5+ real, expensive, domain-specific traps. Not generic advice. Highest-value section.
+
+Tool skills (`robot-data-health`, `video-relay-cadence`) are hybrids: the same structure, with the decision sequence ending in a scan the skill's script runs, plus a `## Run` section. `robot-audit-team` is a team skill with no `landscape.md` and no `## Modern scan`, an allowed exception: it wraps agents and a workflow, not a field that moves, so there is no snapshot to re-verify. It still carries `## How to answer`, a decision sequence and `## Gotchas`.
 
 Keep SKILL.md under ~130 lines. The description must be a "Use when …" trigger with concrete nouns, not a summary. Declare `allowed-tools` with a hyphen: Claude Code silently ignores `allowed_tools`. The key pre-approves tools for the turn and does not restrict them, so list only read and search tools (Read, Grep, Glob, WebSearch, WebFetch) and never unscoped Write, Edit or Bash.
 

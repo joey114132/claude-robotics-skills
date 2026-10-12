@@ -71,7 +71,7 @@ The nine rounds above ran in a workspace that is not part of this repository. Th
 What can be re-run is the suite in `evals/`, written for `claude plugin eval`. It has two kinds of case.
 
 - **Quality, tag `quality`.** 14 trap cases, one each for `robotics-advisor`, `ros2-master` and 12 domain skills (not `robot-fleet`, `robot-soft`, `robot-swarm` or `robotics-radar`). Each prompt carries a trap that a novice answer walks into. Five graders score every reply: `skill-fired` (an indicator, not scored), `trap` (names the real cause and changes the advice), `principle` (explains the mechanism), `actionable` (commits to one recommendation) and `sourcing` (any price, date or version carries a source link).
-- **Routing, tag `routing`.** 31 prompts, each with a `skill-fired` grader that passes only when the intended skill is invoked. 13 are sibling-collision prompts, where two skills could plausibly claim the question and some cases also fail if the neighbouring skill fires.
+- **Routing, tag `routing`.** 34 prompts, each with a `skill-fired` grader that passes only when the intended skill is invoked. 13 are sibling-collision prompts, where two skills could plausibly claim the question and some cases also fail if the neighbouring skill fires.
 
 ```sh
 # Routing: does the right skill fire? One arm, no baseline.
@@ -92,6 +92,8 @@ Results land in `evals/results/`, which is gitignored. The quality suite runs wi
 **After the cleanup, same day (plugin 0.7.0):** routing held at 30 of 30 cases and 60 of 60 runs, and the always-on cost of the 18 descriptions fell from about 4,850 to about 3,975 tokens per session (`claude plugin details`). About 12.8 USD.
 
 **Plugin 0.7.1, measured 2026-10-07:** 31 of 31 cases and 62 of 62 runs. Before this release, `route-tcp-in-moveit-vs-hand` passed only 2 of 6 runs on both 0.7.0 and the working branch: the router picked `robot-hand` from its description's "tool-center-point setup" before reading any body. Moving TCP and planning-scene setup into `robot-arm`'s description raised it to 6 of 6, and the six neighbouring arm/hand cases stayed at 2 of 2.
+
+**Plugin 0.8.0, not yet run:** three routing cases were added for the new skills (`route-policy-deploy-harness-vs-learning`, `route-recorded-bag-gaps-data-health`, `route-web-camera-judder-relay`), each with a sibling-collision grader. They have not been run, so the 31 of 31 above still stands only for the first 31 cases.
 
 **Quality, first run, 2026-10-02 (plugin 0.7.0):** `--runs 1` (the suite default of 3 was overridden, so each case and arm holds one run, although the saved JSON still shows `runsPerCase: 3`), `--allow-tools WebSearch WebFetch`, the default judge (`haiku`), about 5.8 USD including the judge. **The answering model was not pinned or recorded**, so this run cannot be attributed to a model. It is kept as the first data point, and the two pinned runs below replace it as the quality result.
 

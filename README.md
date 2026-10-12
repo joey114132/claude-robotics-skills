@@ -4,10 +4,10 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-D97757)](https://github.com/joey114132/claude-robotics-skills)
-[![Skills](https://img.shields.io/badge/skills-18-brightgreen)](#the-skills)
+[![Skills](https://img.shields.io/badge/skills-22-brightgreen)](#the-skills)
 [![Sources verified](https://img.shields.io/badge/sources-live--checked-4CAF8E)](#why-youd-trust-it)
 
-**[Install](#install) · [The skills](#the-skills) · [How it works](#how-it-works) · [Why you'd trust it](#why-youd-trust-it)**
+**[Install](#install) · [The skills](#the-skills) · [Agents and teams](#agents-and-teams) · [How it works](#how-it-works) · [Why you'd trust it](#why-youd-trust-it)**
 
 </div>
 
@@ -46,6 +46,10 @@ You never need to remember which one to call. Describe your robot and the right 
 | [`robot-safety`](skills/robot-safety/SKILL.md) | Keeping people intact: risk assessment, ISO 10218 / TS 15066 limits, performance levels, e-stop architecture, certification path. |
 | [`robot-sim`](skills/robot-sim/SKILL.md) | Simulation strategy: which simulator, contact fidelity, domain randomization, and whether sim results actually predict hardware. |
 | [`robot-learning`](skills/robot-learning/SKILL.md) | Whether to learn at all — then demonstrations, policy class, evaluation protocol, and a safety wrapper the policy can't override. |
+| [`physical-ai-harness`](skills/physical-ai-harness/SKILL.md) | What wraps a learned model before it drives hardware: output region, inference budget, stale-input revocation, fallback controller, and one gate node with one profile. |
+| [`robot-data-health`](skills/robot-data-health/SKILL.md) | Which recorded rosbag2 episodes are safe to train on: camera coverage, gaps, shared gaps across cameras, duplicate publishers, clock offset. Ships a read-only scan script. |
+| [`video-relay-cadence`](skills/video-relay-cadence/SKILL.md) | Why a relayed camera feed judders when topic Hz looks fine, and which max FPS to pick. Ships a probe and fps calculator. |
+| [`robot-audit-team`](skills/robot-audit-team/SKILL.md) | When to fan an audit of a robot command path out across four harness axes with blind verification, and how to run it. See [Agents and teams](#agents-and-teams). |
 
 </details>
 
@@ -76,6 +80,20 @@ You never need to remember which one to call. Describe your robot and the right 
 | [`robotics-radar`](skills/robotics-radar/SKILL.md) | The collection's own maintenance sweep — see [Self-maintaining](#self-maintaining). |
 
 </details>
+
+---
+
+## Agents and teams
+
+Three agents and one workflow ship with the skills. Agents are read-only by construction (`Read`, `Grep`, `Glob`, `Bash`), and each one's description says when to call it.
+
+| Agent | Call it when |
+|-------|--------------|
+| [`harness-axis-auditor`](agents/harness-axis-auditor.md) | One axis (projection, isolation, input staleness or transfer) of a ROS 2 actuator path needs auditing against the harness checklist. Reads the project's decision records first and cites a real file and line for every finding. |
+| [`finding-skeptic`](agents/finding-skeptic.md) | A single finding needs a blind check. It tries to refute the claim, and defaults to "not real" when it cannot confirm. |
+| [`robot-fault-hunter`](agents/robot-fault-hunter.md) | An intermittent fault has no known cause yet (camera freezes, periodic dropouts). Returns competing hypotheses with read-only falsifying checks and one capture plan, and never touches the robot. |
+
+[`workflows/robot-harness-audit.js`](workflows/robot-harness-audit.js) is the wiring: four axis auditors in parallel, deduplication in code, then one skeptic per high or medium finding. The [`robot-audit-team`](skills/robot-audit-team/SKILL.md) skill says when that is worth its cost. In one comparison on a dual-arm teleoperation bridge it found 16 distinct open issues against 8 for a single agent, at about three times the tokens. That was one task and one run, so it is not a general benchmark.
 
 ---
 
@@ -120,7 +138,7 @@ Two effects are large and reproduce; they cancel. The skills **cite about 20 poi
 
 ## Measuring it
 
-[EVAL.md](EVAL.md) holds the nine-round blind benchmark history. The `evals/` directory holds the current suite for `claude plugin eval`: 14 trap cases that grade answer quality and 31 routing cases that check the right skill fires. EVAL.md has the exact commands and results.
+[EVAL.md](EVAL.md) holds the nine-round blind benchmark history. The `evals/` directory holds the current suite for `claude plugin eval`: 14 trap cases that grade answer quality and 34 routing cases that check the right skill fires. EVAL.md has the exact commands and results.
 
 First results, 2026-10-02 (plugin 0.7.0, one run per arm, skill / baseline):
 
