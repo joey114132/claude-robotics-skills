@@ -1,6 +1,6 @@
 ---
 name: robot-data-health
-description: "Use when recorded robot episodes (rosbag2 mcap) need checking before training or review: rerun playback looks choppy, cameras freeze or stutter in recordings, a dataset is about to go to imitation-learning training, or someone asks which episodes are bad. Scans every episode's camera topics for coverage, mid-episode gaps, multi-camera gaps that happen together (and whether they span publishers), duplicate publishers and publisher clock offset, then writes a keep/warn/drop CSV. Not for live topics (ros2 topic hz, bw), relay judder (video-relay-cadence), or training config and policy choice (robot-learning)."
+description: "Use when recorded robot episodes (rosbag2, mcap or sqlite3) need checking before training or review: rerun playback looks choppy, cameras freeze or stutter in recordings, a dataset is about to go to imitation-learning training, or someone asks which episodes are bad. Scans every episode's camera topics for coverage, mid-episode gaps, multi-camera gaps that happen together (and whether they span publishers), duplicate publishers and publisher clock offset, then writes a keep/warn/drop CSV. Not for live topics (ros2 topic hz, bw), relay judder (video-relay-cadence), or training config and policy choice (robot-learning)."
 allowed-tools:
   - Read
   - Grep
@@ -35,18 +35,18 @@ The decision sequence below is your completeness tool, not the reply's outline. 
 ## The data-health decision sequence
 
 1. **Scope.** Which episodes (one, a day, the whole dataset) and which streams. The script reads camera topics only (`CompressedImage` and `Image`). It says nothing about joint states, actions or force, so a clean verdict covers the cameras and no more. Default: every episode under the dataset root, every camera topic.
-2. **Thresholds.** Set `--hz` to the real camera rate, `--gap` (seconds, default 1.0) to the longest hole a policy could tolerate, and `--min-cover` (percent, default 90). Coverage is frames divided by `hz * duration`, so a wrong `--hz` drops or flags healthy episodes. Deviate from the defaults when the task is slow enough to survive a longer gap, and say so in the answer.
-3. **Run the scan.** Needs a ROS 2 environment (`rosbag2_py`). It only reads. On a shared robot, stream the script over stdin so nothing is left on the machine.
+2. **Thresholds.** Set `--hz` to the real camera rate (one number for all cameras, plus `--hz /topic=15` for each camera that runs at another rate, such as depth), `--gap` (seconds, default 1.0) to the longest hole a policy could tolerate, and `--min-cover` (percent, default 90). Coverage is frames divided by `hz * duration`, so a wrong `--hz` drops or flags healthy episodes. Deviate from the defaults when the task is slow enough to survive a longer gap, and say so in the answer.
+3. **Run the scan.** Needs a ROS 2 environment (`rosbag2_py`); ask which distro, and for an mcap bag the `rosbag2_storage_mcap` plugin must be installed (the storage type is read from each bag's `metadata.yaml`). It only reads. On a shared robot, stream the script over stdin so nothing is left on the machine.
 4. **Read verdicts, then causes.** Verdicts come first, causes second. The cause line for gaps that start together is the useful part: a gap spanning two publisher hosts points at the receiving side (recorder host, kernel, switch), and a gap inside one host points at that publisher.
 5. **Decide per episode.** Drop means exclude from training. Warn means trim or fix and keep. Never delete a bag on a verdict. Write the CSV, keep the bags, and let the training manifest do the excluding.
-6. **Prevent the next one.** Take the cause to its owner: the recorder (messages lost, disk, drain rate), the network (fragmentation, discovery), the publisher (clock sync, duplicate node). Add this scan to the end of each recording session so a bad day is found on that day.
+6. **Prevent the next one.** Take the cause to its owner: the recorder (messages lost, disk, drain rate), the network (fragmentation, discovery), the publisher (clock sync, duplicate node). If the cause is unknown and the fault is intermittent, call the robot-fault-hunter agent for a capture plan. Add this scan to the end of each recording session so a bad day is found on that day.
 
 ## Run
 
 ```bash
-bash -c 'set +u; source /opt/ros/jazzy/setup.bash; python3 ${CLAUDE_SKILL_DIR}/scripts/data_health.py <dataset_root> --csv /tmp/data_health.csv'
+bash -c 'set +u; source /opt/ros/<distro>/setup.bash; python3 ${CLAUDE_SKILL_DIR}/scripts/data_health.py <dataset_root> --hz 30 --hz /<depth_topic>=15 --csv <out.csv>'
 # on a remote robot, without copying a file there:
-ssh <robot-host> 'bash -c "set +u; source /opt/ros/jazzy/setup.bash; python3 - <dataset_root>"' < ${CLAUDE_SKILL_DIR}/scripts/data_health.py
+ssh <robot-host> 'bash -c "set +u; source /opt/ros/<distro>/setup.bash; python3 - <dataset_root>"' < ${CLAUDE_SKILL_DIR}/scripts/data_health.py
 ```
 
 | Verdict | Meaning | Action |
@@ -68,6 +68,7 @@ Speed was 2.5 s for two episodes (1.5 GB) on a laptop. The host key in the cause
 - **A late camera start is trimmable, not fatal.** A 104 s episode whose left cameras came up 2.2 s late is a warn with a trim range. Dropping it would throw away 102 s of good data.
 - **The rosbag2 "messages lost on the transport layer" count is not in the bag.** Read it from the recorder log. Values near 2^31 are counter wrap and mean nothing.
 - **Gaps of about 30 s that recur across every camera point at IP fragment reassembly** (`net.ipv4.ipfrag_time`, default 30 s, per the ROS 2 DDS tuning guide). Check `ReasmFails` in `/proc/net/snmp` on the receiver before blaming the cameras. Large image samples fragment, so this hits camera topics first.
-- **A wrong `--hz` fakes a whole dataset of failures.** A 15 fps camera scanned at `--hz 30` shows 50% coverage on every episode. Check the real rate with one episode before scanning the rest.
+- **A wrong `--hz` fakes a whole dataset of failures.** A 15 fps camera scanned at `--hz 30` shows 50% coverage on every episode, and one `--hz` for a rig that mixes RGB at 30 with depth at 15 fails every episode. Check the real rate of each camera with one episode, then set `--hz /topic=N` for the odd ones.
+- **A bag with no camera topic is a drop, not a keep.** The scan reports "no camera topics" so a joint-only or mis-named recording cannot pass as clean.
 - **On a shared robot, `pgrep -af "<text>"` inside an ssh command matches the ssh command itself.** Use `pgrep -f "^ros2 bag record"` or read `/proc/<pid>/cmdline`. A false "recording" result once let a probe run beside what looked like a live recording.
 - **A clean camera verdict says nothing about action alignment.** Frames can all be present and still sit seconds away from the joint stream that labels them, so check camera-to-state alignment separately before training.
