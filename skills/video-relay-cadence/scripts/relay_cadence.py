@@ -18,23 +18,27 @@ import time
 
 def skip_pattern(src_hashes, sent_hashes):
     """src_hashes: source frames in arrival order. sent_hashes: relayed frames in order.
-    Returns how many source frames the relay advanced per relayed frame. Uneven steps (a mix of 1 and 2) are judder."""
+    Returns how many source frames the relay advanced per relayed frame. Step 0 (the same frame sent again) is a step size
+    like any other, so a mix of 0 and 1 (a timer faster than the source) is judder, as is a mix of 1 and 2."""
     pos = {h: i for i, h in enumerate(src_hashes)}
     idx = [pos[h] for h in sent_hashes if h in pos]
     steps = [b - a for a, b in zip(idx, idx[1:])]
     hist = dict(sorted(collections.Counter(steps).items()))
-    judder = None if len(idx) < 2 else len([s for s in hist if s > 0]) > 1
+    judder = None if len(idx) < 2 else len(hist) > 1
     return {"matched": len(idx), "unmatched": len(sent_hashes) - len(idx), "steps": hist, "judder": judder,
             "pattern": "".join(str(min(s, 9)) for s in steps[:40])}
 
 
 def advise(src_fps, relay_fps):
     """A relay that samples a src_fps stream at relay_fps judders unless relay_fps >= src_fps or src_fps/relay_fps is
-    a whole number. Suggest the source rate and its whole-number divisors."""
+    a whole number. At or above the source rate that holds only if the relay emits on new-frame arrival: a relay on its
+    own timer repeats frames unevenly, so measure it. Suggest the source rate and its whole-number divisors."""
     src, rel = round(src_fps), round(relay_fps)
     even = rel >= src or (rel > 0 and src % rel == 0)
-    return {"judder": not even, "suggest": [src] + [src // k for k in (2, 3) if src % k == 0][:2],
-            "why": "steps alternate between 1 and 2 source frames" if not even else "every step is the same size"}
+    why = "steps alternate between 1 and 2 source frames" if not even else "every step is the same size"
+    if even and rel >= src:
+        why += " only if the relay emits on new-frame arrival; a relay on its own timer repeats frames unevenly, so measure it"
+    return {"judder": not even, "suggest": [src] + [src // k for k in (2, 3) if src % k == 0][:2], "why": why}
 
 
 def measure(topic, url, secs):

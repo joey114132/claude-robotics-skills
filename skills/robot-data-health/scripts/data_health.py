@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
-# Scans recorded rosbag2 (mcap) episodes for camera health and sorts each into keep/warn/drop: coverage, gaps, simultaneous multi-camera gaps, duplicate publishers, header clock offset
+# Scans recorded rosbag2 episodes for camera health and sorts each into keep/warn/drop: coverage, gaps, simultaneous multi-camera gaps, duplicate publishers, header clock offset
 """Usage (inside a ROS 2 environment):
-    data_health.py <root or episode dir>... [--hz 30] [--gap 1.0] [--min-cover 90] [--csv out.csv]
+    data_health.py <root or episode dir>... [--hz 30 [--hz /topic=15 ...]] [--gap 1.0] [--min-cover 90] [--csv out.csv]
 
+A bare --hz number is the default camera rate; --hz /topic=N overrides it for that topic (repeat the flag).
+The storage plugin (mcap, sqlite3) is read from each bag's metadata.yaml; an mcap bag needs rosbag2_storage_mcap installed.
 Read-only. Reads only camera topics (CompressedImage / Image). Prints one line per episode and, with --csv,
 writes a keep/drop list you can feed to training-data selection.
 """
 import argparse
 import csv
 import os
+import re
 import statistics
 import sys
 
@@ -32,6 +35,25 @@ def find_episodes(roots):
     return sorted(out)
 
 
+def storage_id(path):
+    """The storage plugin a bag was written with, from its metadata.yaml (mcap on Jazzy by choice, sqlite3 on Humble by default)."""
+    with open(os.path.join(path, "metadata.yaml")) as f:
+        m = re.search(r"^\s*storage_identifier:\s*(\S+)", f.read(), re.M)
+    return m.group(1) if m else ""            # empty lets rosbag2 pick the plugin itself
+
+
+def parse_hz(values):
+    """--hz values to (default rate, {topic: rate}). A bare number sets the default, /topic=N overrides one topic."""
+    default, over = 30.0, {}
+    for v in values:
+        if "=" in v:
+            topic, _, n = v.rpartition("=")
+            over[topic] = float(n)
+        else:
+            default = float(v)
+    return default, over
+
+
 def _host(topic):
     """Publisher-host key: the topic minus its last two segments (/hand/left/cam0/compressed -> /hand/left)."""
     parts = topic.strip("/").split("/")
@@ -43,13 +65,16 @@ def _overlap(a, b):
     return max(0.0, hi - lo)
 
 
-def scan_episode(path, expected_hz=30.0, gap_s=1.0, min_cover=90.0):
+def scan_episode(path, expected_hz=30.0, gap_s=1.0, min_cover=90.0, hz_overrides=None):
     r = rosbag2_py.SequentialReader()
-    r.open(rosbag2_py.StorageOptions(uri=path, storage_id="mcap"), rosbag2_py.ConverterOptions("cdr", "cdr"))
+    r.open(rosbag2_py.StorageOptions(uri=path, storage_id=storage_id(path)), rosbag2_py.ConverterOptions("cdr", "cdr"))
     meta = r.get_metadata()
     t0 = meta.starting_time.nanoseconds / 1e9
     dur = meta.duration.nanoseconds / 1e9
     cams = {t.name: t.type for t in r.get_all_topics_and_types() if t.type in CAM_TYPES}
+    if not cams:                                                     # nothing to measure is not a clean bill of health
+        return {"path": path, "duration_s": round(dur, 2), "topics": {}, "simultaneous_gaps": [], "verdict": "drop",
+                "reasons": ["no camera topics"], "warnings": []}
     r.set_filter(rosbag2_py.StorageFilter(topics=list(cams)))
     ts = {c: [] for c in cams}
     offs = {c: [] for c in cams}
@@ -68,7 +93,8 @@ def scan_episode(path, expected_hz=30.0, gap_s=1.0, min_cover=90.0):
             gaps.insert(0, (0.0, round(x[0], 3)))                      # camera started late
         if x and dur - x[-1] > gap_s:
             gaps.append((round(x[-1], 3), round(dur - x[-1], 3)))      # camera stopped early
-        cover = 100.0 * len(x) / (expected_hz * dur) if dur > 0 else 0.0
+        hz = (hz_overrides or {}).get(c, expected_hz)
+        cover = 100.0 * len(x) / (hz * dur) if dur > 0 else 0.0
         off = statistics.median(offs[c]) if offs[c] else None
         topics[c] = {"frames": len(x), "coverage_pct": round(cover, 1), "gaps": gaps,
                      "header_offset_s": None if off is None else round(off, 3)}
@@ -105,11 +131,13 @@ def scan_episode(path, expected_hz=30.0, gap_s=1.0, min_cover=90.0):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("roots", nargs="+")
-    ap.add_argument("--hz", type=float, default=30.0, help="expected camera rate")
+    ap.add_argument("--hz", action="append", default=[], metavar="N|/TOPIC=N",
+                    help="expected camera rate: a number for all cameras (default 30), or /topic=N for one topic; repeatable")
     ap.add_argument("--gap", type=float, default=1.0, help="gap threshold in seconds")
     ap.add_argument("--min-cover", type=float, default=90.0, help="coverage below this percent drops the episode")
     ap.add_argument("--csv", help="write path,verdict,duration,min_coverage,reasons,warnings")
     a = ap.parse_args(argv)
+    hz, hz_over = parse_hz(a.hz)
     eps = find_episodes(a.roots)
     if not eps:
         print("no rosbag2 episode (metadata.yaml) under the given roots", file=sys.stderr)
@@ -117,7 +145,7 @@ def main(argv=None):
     rows = []
     for p in eps:
         try:
-            res = scan_episode(p, a.hz, a.gap, a.min_cover)
+            res = scan_episode(p, hz, a.gap, a.min_cover, hz_over)
         except Exception as e:                       # a broken bag is a finding, not a crash of the whole scan
             res = {"path": p, "duration_s": 0, "topics": {}, "verdict": "drop", "reasons": [f"unreadable: {e}"], "warnings": []}
         covers = [t["coverage_pct"] for t in res["topics"].values()]

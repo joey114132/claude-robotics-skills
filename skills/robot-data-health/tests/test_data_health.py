@@ -14,10 +14,10 @@ import data_health as eh  # noqa: E402
 T0 = 1_000_000_000 * 1_790_000_000
 
 
-def _bag(path, streams, dur=10.0):
+def _bag(path, streams, dur=10.0, storage="mcap"):
     """streams: [(topic, type_name, msg_class, hz, gap=(a, b) or None, header_offset_s)]"""
     w = rosbag2_py.SequentialWriter()
-    w.open(rosbag2_py.StorageOptions(uri=str(path), storage_id="mcap"), rosbag2_py.ConverterOptions("cdr", "cdr"))
+    w.open(rosbag2_py.StorageOptions(uri=str(path), storage_id=storage), rosbag2_py.ConverterOptions("cdr", "cdr"))
     msgs = []
     for i, (topic, tname, cls, hz, gap, off) in enumerate(streams):
         w.create_topic(rosbag2_py.TopicMetadata(id=i, name=topic, type=tname, serialization_format="cdr"))
@@ -88,3 +88,30 @@ def test_edge_gaps_are_trimmed_not_dropped(tmp_path):
     r = eh.scan_episode(p, expected_hz=30, gap_s=1.0, min_cover=90)
     assert r["verdict"] == "warn" and not r["reasons"]
     assert any("trim" in w for w in r["warnings"])
+
+
+def test_bag_without_camera_topics_is_not_keep(tmp_path):
+    p = _bag(tmp_path / "nocam", [("/arm/joint_states", "sensor_msgs/msg/JointState", JointState, 100, None, 0.0)])
+    r = eh.scan_episode(p)
+    assert r["verdict"] == "drop" and "no camera topics" in r["reasons"]
+
+
+def test_storage_id_comes_from_metadata_not_a_hardcoded_mcap(tmp_path):
+    p = _bag(tmp_path / "sq", [("/hand/left/cam0/compressed", *CAM, 30, None, 0.0)], storage="sqlite3")
+    assert eh.storage_id(p) == "sqlite3"
+    r = eh.scan_episode(p, expected_hz=30)
+    assert r["verdict"] == "keep" and r["topics"]["/hand/left/cam0/compressed"]["frames"] == 300
+
+
+def test_per_topic_hz_override_stops_a_slow_camera_faking_a_failure(tmp_path):
+    p = _bag(tmp_path / "mixed", [("/hand/left/cam0/compressed", *CAM, 30, None, 0.0),
+                                  ("/hand/left/depth/compressed", *CAM, 15, None, 0.0)])
+    assert eh.scan_episode(p, expected_hz=30)["verdict"] == "drop"
+    r = eh.scan_episode(p, expected_hz=30, hz_overrides={"/hand/left/depth/compressed": 15.0})
+    assert r["verdict"] == "keep"
+
+
+def test_hz_arguments_split_into_default_and_overrides():
+    assert eh.parse_hz(["30", "/depth=15"]) == (30.0, {"/depth": 15.0})
+    assert eh.parse_hz([]) == (30.0, {})
+    assert eh.parse_hz(["/a=10", "/b=5"]) == (30.0, {"/a": 10.0, "/b": 5.0})

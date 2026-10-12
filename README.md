@@ -4,7 +4,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-D97757)](https://github.com/joey114132/claude-robotics-skills)
-[![Skills](https://img.shields.io/badge/skills-22-brightgreen)](#the-skills)
+[![Skills](https://img.shields.io/badge/skills-23-brightgreen)](#the-skills)
 [![Sources verified](https://img.shields.io/badge/sources-live--checked-4CAF8E)](#why-youd-trust-it)
 
 **[Install](#install) · [The skills](#the-skills) · [Agents and teams](#agents-and-teams) · [How it works](#how-it-works) · [Why you'd trust it](#why-youd-trust-it)**
@@ -50,6 +50,7 @@ You never need to remember which one to call. Describe your robot and the right 
 | [`robot-data-health`](skills/robot-data-health/SKILL.md) | Which recorded rosbag2 episodes are safe to train on: camera coverage, gaps, shared gaps across cameras, duplicate publishers, clock offset. Ships a read-only scan script. |
 | [`video-relay-cadence`](skills/video-relay-cadence/SKILL.md) | Why a relayed camera feed judders when topic Hz looks fine, and which max FPS to pick. Ships a probe and fps calculator. |
 | [`robot-audit-team`](skills/robot-audit-team/SKILL.md) | When to fan an audit of a robot command path out across four harness axes with blind verification, and how to run it. See [Agents and teams](#agents-and-teams). |
+| [`robot-autopilot`](skills/robot-autopilot/SKILL.md) | A one-shot "diagnose and fix this" run: triage, specialists, blind verification, test-first patches in worktrees reviewed by a critic, and a report that leaves every hardware command to you. |
 
 </details>
 
@@ -85,15 +86,20 @@ You never need to remember which one to call. Describe your robot and the right 
 
 ## Agents and teams
 
-Three agents and one workflow ship with the skills. Agents are read-only by construction (`Read`, `Grep`, `Glob`, `Bash`), and each one's description says when to call it.
+Six agents and two workflows ship with the skills. Five agents have only `Read`, `Grep` and `Glob`. `robot-fix-builder` is the only one that writes: it adds `Edit`, `Write` and `Bash` (to run its tests), and the autopilot workflow runs it only inside a git worktree. Each agent's description says when to call it.
 
 | Agent | Call it when |
 |-------|--------------|
 | [`harness-axis-auditor`](agents/harness-axis-auditor.md) | One axis (projection, isolation, input staleness or transfer) of a ROS 2 actuator path needs auditing against the harness checklist. Reads the project's decision records first and cites a real file and line for every finding. |
 | [`finding-skeptic`](agents/finding-skeptic.md) | A single finding needs a blind check. It tries to refute the claim, and defaults to "not real" when it cannot confirm. |
 | [`robot-fault-hunter`](agents/robot-fault-hunter.md) | An intermittent fault has no known cause yet (camera freezes, periodic dropouts). Returns competing hypotheses with read-only falsifying checks and one capture plan, and never touches the robot. |
+| [`robot-triage-router`](agents/robot-triage-router.md) | A symptom or goal has to be classified (live fault, intermittent fault, recorded data, video relay, policy deployment, code-path audit, design question) and turned into a plan of specialists. Read-only; returns JSON. |
+| [`robot-fix-builder`](agents/robot-fix-builder.md) | One verified defect needs a minimal patch and a test that fails before and passes after. The only agent that can write, and it runs in an isolated git worktree. It never touches hardware and never pushes. |
+| [`robot-change-critic`](agents/robot-change-critic.md) | A patch needs review against the harness checklist, the project's decision records and its tests. Read and search tools only; returns PASS or failures with file and line. |
 
 [`workflows/robot-harness-audit.js`](workflows/robot-harness-audit.js) is the wiring: four axis auditors in parallel, deduplication in code, then one skeptic per high or medium finding. The [`robot-audit-team`](skills/robot-audit-team/SKILL.md) skill says when that is worth its cost. In one comparison on a dual-arm teleoperation bridge it found 16 distinct open issues against 8 for a single agent, at about three times the tokens. That was one task and one run, so it is not a general benchmark.
+
+[`workflows/robot-autopilot.js`](workflows/robot-autopilot.js) runs the whole loop from one stated symptom: triage, the chosen specialists, one blind skeptic per high or medium finding, then up to five confirmed findings each get a test-first patch from `robot-fix-builder` in its own worktree and up to three rounds of review by `robot-change-critic`. The caps live in the script. Everything that would restart something, publish to a robot, switch a controller, change a gain, send bus frames or push is left to you as an exact command in the report's pending approvals. The [`robot-autopilot`](skills/robot-autopilot/SKILL.md) skill says when to use it. Both workflows take an `agentPrefix` argument. The default, `robotics-skills:`, fits a plugin install; pass `""` when the agents are installed bare (symlinks, or `--plugin-dir`). It has no benchmark yet.
 
 ---
 
@@ -138,7 +144,7 @@ Two effects are large and reproduce; they cancel. The skills **cite about 20 poi
 
 ## Measuring it
 
-[EVAL.md](EVAL.md) holds the nine-round blind benchmark history. The `evals/` directory holds the current suite for `claude plugin eval`: 14 trap cases that grade answer quality and 34 routing cases that check the right skill fires. EVAL.md has the exact commands and results.
+[EVAL.md](EVAL.md) holds the nine-round blind benchmark history. The `evals/` directory holds the current suite for `claude plugin eval`: 14 trap cases that grade answer quality and 37 routing cases that check the right skill fires. EVAL.md has the exact commands and results.
 
 First results, 2026-10-02 (plugin 0.7.0, one run per arm, skill / baseline):
 

@@ -1,6 +1,6 @@
 {
   "name": "claude-robotics-skills",
-  "description": "Fundamentals-first robotics skills for Claude Code: 18 domain advisors (method fundamentals, ROS 2, arms, hands, mobile, legged, aerial, marine, soft, perception, safety, simulation, fleets, swarms, field, medical, learning, policy-deployment harness), tools for recorded-episode health and video relay judder, a read-only audit team with agents and a workflow, plus a self-maintenance radar. Every landscape entry carries a live source.",
+  "description": "Fundamentals-first robotics skills for Claude Code: 18 domain advisors (method fundamentals, ROS 2, arms, hands, mobile, legged, aerial, marine, soft, perception, safety, simulation, fleets, swarms, field, medical, learning, policy-deployment harness), tools for recorded-episode health and video relay judder, a read-only audit team and an autonomous diagnose-and-fix autopilot with agents and workflows, plus a self-maintenance radar. Every landscape entry carries a live source.",
   "owner": {
     "name": "joey114132"
   },
@@ -8,7 +8,7 @@
     {
       "name": "robotics-skills",
       "source": "./",
-      "description": "Fundamentals-first robotics advisors across 18 domains (arms, hands, mobile, legged, aerial, marine, soft, perception, safety, sim, fleet, swarm, field, medical, learning, ROS 2, fundamentals, physical-AI harness), data-health and video-relay tools, an audit team with three read-only agents and a workflow, plus a self-maintenance radar.",
+      "description": "Fundamentals-first robotics advisors across 18 domains (arms, hands, mobile, legged, aerial, marine, soft, perception, safety, sim, fleet, swarm, field, medical, learning, ROS 2, fundamentals, physical-AI harness), data-health and video-relay tools, an audit team and an autopilot that fixes test-first and stops at hardware (six agents, two workflows), plus a self-maintenance radar.",
       "category": "robotics"
     }
   ]
