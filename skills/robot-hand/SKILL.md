@@ -1,6 +1,6 @@
 ---
 name: robot-hand
-description: Robot hand / gripper / end-effector advisor — grasping fundamentals plus current methods. Use when the user selects, designs, models, or controls a gripper or robotic hand — parallel-jaw vs underactuated vs dexterous multi-finger vs soft vs vacuum, grasp planning and force/form closure, grip force control on servo-driven hands (current/torque limiting), tactile sensing, tool-center-point setup, or hand teleoperation/retargeting.
+description: Robot hand / gripper / end-effector advisor — grasping fundamentals plus current methods. Use when the user selects, designs, models, or controls a gripper or robotic hand — parallel-jaw vs underactuated vs dexterous multi-finger vs soft vs vacuum, grasp planning and force/form closure, grip force control on servo-driven hands (current/torque limiting), tactile sensing, or hand teleoperation/retargeting.
 allowed-tools:
   - Read
   - Grep
@@ -38,7 +38,7 @@ The simplest workable option stays on the table at every step.
 2. **Actuation & transmission** — direct servo per joint, tendon-driven, linkage, or pneumatic. For bus-servo hands (Feetech/Dynamixel-class), this decision includes control mode: position, velocity, or current/torque.
 3. **Grasp strategy** — analytic (antipodal grasps, force/form closure, friction cone reasoning) vs learned grasp synthesis. Ground the terminology first: *force closure* = friction resists any wrench; *form closure* = geometry alone cages the object.
 4. **Grip force control** — how hard to squeeze and how to know: open-loop position with compliance, current/torque limiting, or tactile/force feedback. This decision dominates reliability on deformable and brittle objects.
-5. **Integration** — TCP definition (which changes with the grasped object), payload accounting, TF frames, collision model of the hand, and the grasped-object attach/detach in the planning scene.
+5. **Integration** — what the hand hands over to the arm: where the grasp frame sits and how it shifts with the grasped object, payload numbers, finger TF frames, and the hand's collision geometry. Setting the TCP and attaching or detaching the object in the planning scene stays with `robot-arm`.
 6. **Teleoperation/retargeting** (if applicable) — mapping a human hand or leader device to the hand's DOF: joint-space copy, fingertip-space retargeting, or learned mappings (`references/hands-catalog.md` has the comparison; policy training on collected demos escalates to `robot-learning`).
 
 ## Modern scan
@@ -54,6 +54,6 @@ Grasping is an active research area — before presenting options, search (WebSe
 - **Parallel-jaw solves most of it.** A well-tuned two-finger gripper covers the large majority of pick-and-place tasks; a dexterous hand adds cost, fragility, and a research problem. Recommend dexterity only when the task demonstrably needs in-hand manipulation.
 - **Simulated contact is not evidence a grasp works.** Contact/friction models diverge badly from reality — validate with analytic closure reasoning plus real trials, not sim success.
 - **Underactuated fingers hide their pose.** With tendons/linkages, motor angle does not determine finger configuration once in contact — don't build state estimates that assume it does.
-- **The TCP moves when the hand grasps.** Planning with the empty-hand TCP after grasping a long object causes collisions and misplacement — update the tool frame and attach the object's collision body.
+- **The TCP moves when the hand grasps.** Planning with the empty-hand TCP after grasping a long object causes collisions and misplacement — hand `robot-arm` the new grasp frame and the object's geometry so it can update the TCP and attach the collision body.
 - **Grip force ≠ motor current alone.** Transmission friction and finger geometry reshape the force at the pad; calibrate the current-to-force mapping with a real measurement if force matters.
 - **A gripper's collaborative-safety claim belongs to the tested finger set.** ISO 10218-2:2025 incorporated the former ISO/TS 15066, and its Annex M, which is informative, keeps the pain-threshold tables. A vendor's compliance statement covers only the configuration it was tested in, so a different fingertip shape, material or sharp edge can change the result, and a risk assessment is still required per application. Hand grip force, speed and finger design to `robot-safety` before promising a cobot cell.

@@ -1,6 +1,6 @@
 ---
 name: ros2-master
-description: Senior ROS 2 architect advisor — decides WHICH approach fits before any code is written. Use when the user designs or restructures a ROS 2 system, asks "topic vs service vs action", "lifecycle node or plain", "which executor/QoS/middleware", plans a package or launch architecture, picks between ros2_control and a custom driver, chooses a simulator, or starts any new ROS 2 robot project. Also use for ROS 2 architecture reviews.
+description: Senior ROS 2 architect advisor — decides WHICH approach fits before any code is written. Use when the user designs or restructures a ROS 2 system, asks "topic vs service vs action", "lifecycle node or plain", "which executor/QoS/middleware", plans a package or launch architecture, picks between ros2_control and a custom driver, wires a simulator into the ROS 2 graph, or starts any new ROS 2 robot project. Also use for ROS 2 architecture reviews.
 allowed-tools:
   - Read
   - Grep
@@ -11,7 +11,7 @@ allowed-tools:
 
 # ROS 2 Master
 
-Act as a senior ROS 2 architect. Your job is the *decision layer*: which pattern, which stack, which tradeoff — settled with the user before code gets written. For API-level code patterns, defer to the `ros2-engineering-skills` skill's reference files if installed; do not duplicate its content.
+Act as a senior ROS 2 architect. Your job is the *decision layer*: which pattern, which stack, which tradeoff — settled with the user before code gets written. For API-level code patterns, defer to the `ros2-engineering-skills` skill's reference files if installed; do not duplicate its content. Which simulator to use and how far to trust it belong to `robot-sim`; this skill covers how a simulator plugs into the graph (bridges, `/clock`, `use_sim_time`).
 
 ## How to answer
 
