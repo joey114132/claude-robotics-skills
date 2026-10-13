@@ -6,7 +6,7 @@ export const meta = {
     { title: 'Investigate', detail: 'the chosen specialists, in parallel or in sequence' },
     { title: 'Verify', detail: 'one blind skeptic per high or medium finding' },
     { title: 'Fix', detail: 'builder in a worktree, then critic, at most 3 rounds per finding' },
-    { title: 'Report', detail: 'assembled in code' },
+    { title: 'Report', detail: 'command gate vets the pending approvals, then the report is assembled in code' },
   ],
 }
 
@@ -50,8 +50,10 @@ const failed_stages = []
 const dropped = []
 const drop = (what, why) => { dropped.push({ what, why }); log(`dropped: ${what} (${why})`) }
 
-async function spawn(prompt, opts) {
-  if (spawned >= HARD.agents) {
+// One agent slot is held back for the command gate, so the cap can never leave a pending command unvetted.
+const GATE_SLOT = 1
+async function spawn(prompt, opts, isGate) {
+  if (spawned >= (isGate ? HARD.agents : HARD.agents - GATE_SLOT)) {
     failed_stages.push({ stage: opts.phase, id: opts.label, why: `agent cap ${HARD.agents} reached` })
     log(`agent cap ${HARD.agents} reached; skipped ${opts.label}`)
     return null
@@ -442,6 +444,47 @@ log(`patches: ${patches.length} with a draft, ${patches.filter(p => p.outcome ==
 
 // ---------------------------------------------------------------- Report
 phase('Report')
+
+// Every pending approval gets a verdict from robot-command-gate before the human sees it. A command the gate
+// calls FORBIDDEN is listed as blocked and is not offered for running. No verdict (gate failed) is stated, not guessed.
+const CMD_GATE = {
+  type: 'array',
+  items: {
+    type: 'object',
+    properties: {
+      command: { type: 'string' },
+      machine: { type: 'string' },
+      verdict: { type: 'string', enum: ['READ_ONLY', 'NEEDS_APPROVAL', 'FORBIDDEN'] },
+      rule: { type: 'string' },
+      record_cited: { type: 'string' },
+      why: { type: 'string' },
+      safer_alternative: { type: 'string' },
+    },
+    required: ['command', 'verdict', 'rule', 'why', 'safer_alternative'],
+  },
+}
+const gateVerdicts = new Map()
+if (pending.length) {
+  const gated = await spawn(
+    `Vet these ${pending.length} commands before a human is offered them. Each runs on the machine named in its line.\n` +
+    pending.map((p, i) => `${i + 1}. machine: ${p.machine || '(not stated; treat as the robot)'}\n   command: ${p.command}`).join('\n') +
+    `\n\nRepository root: ${root}\nDecision records and any per-robot profile (bus map, shared hosts) you MUST read: ${allRecords.length ? allRecords.join(', ') : '(none listed; search the repository and say what you found)'}.\n` +
+    `Return one verdict object per command, in the same order, with the command text unchanged.`,
+    { agentType: AGENT('robot-command-gate'), label: 'command-gate', phase: 'Report', schema: CMD_GATE }, true)
+  // Match by normalized text first, then by position when the gate returned one verdict per command.
+  // A command with neither match has no verdict, and its text is withheld from the report.
+  const norm = t => String(t || '').replace(/\s+/g, ' ').trim()
+  const list = Array.isArray(gated) ? gated : []
+  pending.forEach((p, i) => {
+    const g = list.find(x => norm(x.command) === norm(p.command)) || (list.length === pending.length ? list[i] : undefined)
+    if (g) gateVerdicts.set(p.command, g)
+  })
+}
+const gateOf = p => gateVerdicts.get(p.command)
+const blocked = pending.filter(p => (gateOf(p) || {}).verdict === 'FORBIDDEN')
+const unvetted = pending.filter(p => !gateOf(p))
+log(`command gate: ${gateVerdicts.size} of ${pending.length} verdict(s), ${blocked.length} FORBIDDEN, ${unvetted.length} unvetted`)
+
 const fence = text => { const t = text || ''; const f = t.includes('```') ? '````' : '```'; return `${f}\n${t.trim()}\n${f}` }
 const L = []
 L.push('# Robot autopilot report', '')
@@ -491,10 +534,17 @@ for (const h of hunts) {
 }
 
 L.push('', '## Pending approvals', '')
-L.push('The team ran none of these. They touch real hardware, a shared robot, or send something off this machine. Run them yourself, in order, when you are ready.', '')
+L.push('The team ran none of these. They touch real hardware, a shared robot, or send something off this machine. Each carries a verdict from the command gate (a read-only reviewer). Run them yourself, in order, when you are ready; a BLOCKED or UNVETTED one is not offered.', '')
 if (!pending.length) L.push('None collected.')
 pending.forEach((p, i) => {
-  L.push(`${i + 1}. ${p.machine ? `On ${p.machine}` : 'Where it applies'}, from ${p.source}: ${p.why}`, '', fence(p.command))
+  const g = gateOf(p)
+  const tag = !g ? 'UNVETTED: the gate returned no verdict for this command, so it is withheld. Do not run it; vet it with robot-command-gate first.'
+    : g.verdict === 'FORBIDDEN' ? `BLOCKED by the gate (${g.rule}): ${g.why}`
+    : `Gate verdict ${g.verdict} (${g.rule}${g.record_cited && g.record_cited !== 'none' ? `, record ${g.record_cited}` : ''}): ${g.why}`
+  L.push(`${i + 1}. ${p.machine ? `On ${p.machine}` : 'Where it applies'}, from ${p.source}: ${p.why}`, '', tag)
+  if (!g) L.push('', 'The command text is withheld on purpose.')
+  else if (g.verdict === 'FORBIDDEN') L.push('', `Do instead: ${g.safer_alternative}`, '', 'The command text is withheld on purpose.')
+  else L.push('', fence(p.command))
 })
 L.push('', 'Pushing a branch or applying a patch to a shared robot is yours to do; the team stopped before both.')
 
@@ -509,7 +559,9 @@ return {
   classification: plan.classification,
   confirmed: confirmed.map(f => ({ id: f.id, title: f.title, file: f.file, line: f.line, severity: f.severity })),
   patches: patches.map(p => ({ id: p.finding.id, outcome: p.outcome, rounds: p.rounds, worktree_path: p.best.draft.worktree_path, branch: p.best.draft.branch })),
-  pending_approvals: pending,
+  pending_approvals: pending.map(p => { const g = gateOf(p); return g && g.verdict !== 'FORBIDDEN' ? { ...p, gate: g } : { ...p, command: '(withheld)', gate: g || null } }),
+  blocked_by_gate: blocked.length,
+  unvetted: unvetted.length,
   unverified,
   failed_stages,
   dropped,
