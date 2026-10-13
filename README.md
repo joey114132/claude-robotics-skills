@@ -4,10 +4,10 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-D97757)](https://github.com/joey114132/claude-robotics-skills)
-[![Skills](https://img.shields.io/badge/skills-23-brightgreen)](#the-skills)
+[![Skills](https://img.shields.io/badge/skills-24-brightgreen)](#the-skills)
 [![Sources verified](https://img.shields.io/badge/sources-live--checked-4CAF8E)](#why-youd-trust-it)
 
-**[Install](#install) · [The skills](#the-skills) · [Agents and teams](#agents-and-teams) · [How it works](#how-it-works) · [Why you'd trust it](#why-youd-trust-it)**
+**[Install](#install) · [The skills](#the-skills) · [Agents and teams](#agents-and-teams) · [How it works](#how-it-works) · [Why you'd trust it](#why-youd-trust-it) · [Third-party notices](#third-party-notices)**
 
 </div>
 
@@ -51,6 +51,7 @@ You never need to remember which one to call. Describe your robot and the right 
 | [`video-relay-cadence`](skills/video-relay-cadence/SKILL.md) | Why a relayed camera feed judders when topic Hz looks fine, and which max FPS to pick. Ships a probe and fps calculator. |
 | [`robot-audit-team`](skills/robot-audit-team/SKILL.md) | When to fan an audit of a robot command path out across four harness axes with blind verification, and how to run it. See [Agents and teams](#agents-and-teams). |
 | [`robot-autopilot`](skills/robot-autopilot/SKILL.md) | A one-shot "diagnose and fix this" run: triage, specialists, blind verification, test-first patches in worktrees reviewed by a critic, and a report that leaves every hardware command to you. |
+| [`robot-preflight-team`](skills/robot-preflight-team/SKILL.md) | One read-only go/no-go sheet before a session on a shared robot: a verdict per planned command, drift across model copies, host config and clock agreement, and evidence that a gain change was simulated first. A GO covers files and records, never the robot itself. |
 
 </details>
 
@@ -86,7 +87,7 @@ You never need to remember which one to call. Describe your robot and the right 
 
 ## Agents and teams
 
-Six agents and two workflows ship with the skills. Five agents have only `Read`, `Grep` and `Glob`. `robot-fix-builder` is the only one that writes: it adds `Edit`, `Write` and `Bash` (to run its tests), and the autopilot workflow runs it only inside a git worktree. Each agent's description says when to call it.
+Ten agents and three workflows ship with the skills. Nine agents have only `Read`, `Grep` and `Glob`. `robot-fix-builder` is the only one that writes: it adds `Edit`, `Write` and `Bash` (to run its tests), and the autopilot workflow runs it only inside a git worktree. Each agent's description says when to call it.
 
 | Agent | Call it when |
 |-------|--------------|
@@ -96,10 +97,16 @@ Six agents and two workflows ship with the skills. Five agents have only `Read`,
 | [`robot-triage-router`](agents/robot-triage-router.md) | A symptom or goal has to be classified (live fault, intermittent fault, recorded data, video relay, policy deployment, code-path audit, design question) and turned into a plan of specialists. Read-only; returns JSON. |
 | [`robot-fix-builder`](agents/robot-fix-builder.md) | One verified defect needs a minimal patch and a test that fails before and passes after. The only agent that can write, and it runs in an isolated git worktree. It never touches hardware and never pushes. |
 | [`robot-change-critic`](agents/robot-change-critic.md) | A patch needs review against the harness checklist, the project's decision records and its tests. Read and search tools only; returns PASS or failures with file and line. |
+| [`robot-command-gate`](agents/robot-command-gate.md) | Commands are about to be typed against a robot, a robot PC or a bus (CAN frames, topic publishes, remote shells, service restarts, a flash). Sorts each one into READ_ONLY, NEEDS_APPROVAL or FORBIDDEN from the project's bus map and shared-host list. It classifies and never runs anything. |
+| [`robot-model-drift-auditor`](agents/robot-model-drift-auditor.md) | The same robot model exists in several copies (laptop and robot PC checkouts, installed share directories, URDF next to MJCF). One call takes one lens (limits, inertia, collision or structure) and lists every field where the copies disagree. |
+| [`robot-sync-config-auditor`](agents/robot-sync-config-auditor.md) | A multi-host ROS 2 session is about to start, or hosts were added or re-imaged. Compares RMW and DDS settings, interface binding, MTU and kernel buffers, and time sources across hosts, and hands back read-only capture commands. |
+| [`robot-gain-change-gate`](agents/robot-gain-change-gate.md) | A gain, limit, filter or controller change is about to reach hardware. Checks that a simulation run exists for exactly that parameter file, with acceptance criteria written first and a bounded step and rollback. Returns PASS or BLOCK, and never proposes gain values. |
 
 [`workflows/robot-harness-audit.js`](workflows/robot-harness-audit.js) is the wiring: four axis auditors in parallel, deduplication in code, then one skeptic per high or medium finding. The [`robot-audit-team`](skills/robot-audit-team/SKILL.md) skill says when that is worth its cost. In one comparison on a dual-arm teleoperation bridge it found 16 distinct open issues against 8 for a single agent, at about three times the tokens. That was one task and one run, so it is not a general benchmark.
 
-[`workflows/robot-autopilot.js`](workflows/robot-autopilot.js) runs the whole loop from one stated symptom: triage, the chosen specialists, one blind skeptic per high or medium finding, then up to five confirmed findings each get a test-first patch from `robot-fix-builder` in its own worktree and up to three rounds of review by `robot-change-critic`. The caps live in the script. Everything that would restart something, publish to a robot, switch a controller, change a gain, send bus frames or push is left to you as an exact command in the report's pending approvals. The [`robot-autopilot`](skills/robot-autopilot/SKILL.md) skill says when to use it. Both workflows take an `agentPrefix` argument. The default, `robotics-skills:`, fits a plugin install; pass `""` when the agents are installed bare (symlinks, or `--plugin-dir`). It has no benchmark yet.
+[`workflows/robot-autopilot.js`](workflows/robot-autopilot.js) runs the whole loop from one stated symptom: triage, the chosen specialists, one blind skeptic per high or medium finding, then up to five confirmed findings each get a test-first patch from `robot-fix-builder` in its own worktree and up to three rounds of review by `robot-change-critic`. The caps live in the script. Everything that would restart something, publish to a robot, switch a controller, change a gain, send bus frames or push is left to you as an exact command in the report's pending approvals, each tagged READ_ONLY, NEEDS_APPROVAL or FORBIDDEN by `robot-command-gate`. The [`robot-autopilot`](skills/robot-autopilot/SKILL.md) skill says when to use it. Both workflows take an `agentPrefix` argument. The default, `robotics-skills:`, fits a plugin install; pass `""` when the agents are installed bare (symlinks, or `--plugin-dir`). It has no benchmark yet.
+
+[`workflows/robot-preflight.js`](workflows/robot-preflight.js) is the wiring for the [`robot-preflight-team`](skills/robot-preflight-team/SKILL.md) skill. It needs a confirmed per-robot profile (bus map, shared hosts, canonical model copy, speed caps), or it drafts one and stops for a human to read. Then the command gate, four drift auditors (one per lens), the sync auditor and the gain gate run in parallel, only where they apply, followed by one blind skeptic per high or medium finding. Three things are computed in code: the verdict, the caps (14 agent calls at most) and a file-hash comparison taken before and after the run. The hashes come from you, because the script has no shell. It takes the same `agentPrefix` argument and has no benchmark yet.
 
 ---
 
@@ -144,7 +151,7 @@ Two effects are large and reproduce; they cancel. The skills **cite about 20 poi
 
 ## Measuring it
 
-[EVAL.md](EVAL.md) holds the nine-round blind benchmark history. The `evals/` directory holds the current suite for `claude plugin eval`: 14 trap cases that grade answer quality and 37 routing cases that check the right skill fires. EVAL.md has the exact commands and results.
+[EVAL.md](EVAL.md) holds the nine-round blind benchmark history. The `evals/` directory holds the current suite for `claude plugin eval`: 14 trap cases that grade answer quality and 42 routing cases that check the right skill fires. EVAL.md has the exact commands and results.
 
 First results, 2026-10-02 (plugin 0.7.0, one run per arm, skill / baseline):
 
@@ -205,6 +212,24 @@ done
 ## Contributing
 
 New skills follow the house structure: a How to answer block copied from a sibling skill, a decision sequence in dependency order, a Modern scan that re-verifies live, and a Gotchas section of real, expensive traps — not generic advice. Landscape entries need a live source. See [CLAUDE.md](CLAUDE.md) for the conventions and run `scripts/check_sources.py` before opening a PR.
+
+## Third-party notices
+
+This repository is MIT-licensed ([LICENSE](LICENSE)). Nothing below was copied into it as code or text. Each row names a project or paper whose idea an agent or skill reimplements in its own words, with the licence GitHub reports for it (`gh api repos/<owner>/<repo>`, read on 2026-10-13).
+
+| Used in | Source | Licence | What was taken |
+|---|---|---|---|
+| [`agents/robot-command-gate.md`](agents/robot-command-gate.md) | [KumarRobotics/RoboGuard](https://github.com/KumarRobotics/RoboGuard) | MIT | The idea of testing a proposed action against explicit, machine-checkable rules instead of trusting whoever proposed it. |
+| [`agents/robot-command-gate.md`](agents/robot-command-gate.md) | [zhinkgit/embeddedskills](https://github.com/zhinkgit/embeddedskills) | MIT | Cited as the source of the passive-capture and decode side of CAN tooling that the gate classes as read-only. The send path is what the gate refuses. |
+| [`agents/robot-model-drift-auditor.md`](agents/robot-model-drift-auditor.md) | [kevinxqiu/debate2create](https://github.com/kevinxqiu/debate2create) | Apache-2.0 | The one-criterion-per-judge panel, with file comparison in place of simulator scoring. |
+| [`agents/robot-gain-change-gate.md`](agents/robot-gain-change-gate.md) | [arXiv 2607.26594](https://arxiv.org/abs/2607.26594), "A Physics-Informed Framework for PID Tuning of Chemical Processes Using Large Language Model Agents" | paper | Response-feature summaries, written acceptance criteria, and stability that cannot be traded against performance. |
+| [`agents/robot-gain-change-gate.md`](agents/robot-gain-change-gate.md), [`skills/robot-preflight-team`](skills/robot-preflight-team/SKILL.md) | [arXiv 2606.08610](https://arxiv.org/abs/2606.08610), "HARBOR: A Harness Framework for Agentic Robot Reinforcement Learning" | paper | A stage that advances only through an executable gate, and file-based stage handoffs. |
+| [`agents/robot-gain-change-gate.md`](agents/robot-gain-change-gate.md) | [arXiv 2511.22975](https://arxiv.org/abs/2511.22975), "An LLM-Assisted Multi-Agent Control Framework for Roll-to-Roll Manufacturing Systems" | paper | Cited as consistent with the simulate, safety-check, then apply order. The order itself is this repository's inference. |
+| [`skills/robot-preflight-team`](skills/robot-preflight-team/SKILL.md) | [arXiv 2607.13049](https://arxiv.org/abs/2607.13049), "SPINE: Bridging the Cyber-Physical Gap with Agentic AI" | paper | A profile builder that compiles robot-specific context before debugging starts. |
+| [`skills/robot-preflight-team`](skills/robot-preflight-team/SKILL.md) | [wshobson/agents](https://github.com/wshobson/agents/tree/main/plugins/agent-teams) | MIT | File-ownership boundaries and a read-only reviewer role. |
+| [`skills/robot-preflight-team`](skills/robot-preflight-team/SKILL.md) | [Yeachan-Heo/oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) | MIT | A verify stage that escalates by risk. |
+
+Papers carry no software licence, and no paper text is reproduced. Paper titles were read from the arXiv API on 2026-10-13. The licence column comes from the GitHub API and was not checked against each repository's LICENSE file.
 
 ## License
 
